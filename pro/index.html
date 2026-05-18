@@ -836,45 +836,70 @@ function irPara(id){
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 function calcHora(){
-  const total = (+custo_vida.value || 0) + (+custo_tools.value || 0) + (+custo_imposto.value || 0) + (+lucro.value || 0);
-  const horas = +horas_mes.value || 1;
-  const margem = +margem.value || 0;
+  const total =
+    (Number(document.getElementById('custo_vida')?.value) || 0) +
+    (Number(document.getElementById('custo_tools')?.value) || 0) +
+    (Number(document.getElementById('custo_imposto')?.value) || 0) +
+    (Number(document.getElementById('lucro')?.value) || 0);
+
+  const horas = Number(document.getElementById('horas_mes')?.value) || 1;
+  const margem = Number(document.getElementById('margem')?.value) || 0;
+
   horaMin = total / horas;
   horaRec = horaMin * (1 + margem / 100);
 
-  document.getElementById('r-custo').textContent = fmt(total);
-  document.getElementById('r-hora-min').textContent = fmt(horaMin);
-  document.getElementById('r-hora-rec').textContent = fmt(horaRec);
+  const custoEl = document.getElementById('r-custo');
+  const minEl = document.getElementById('r-hora-min');
+  const recEl = document.getElementById('r-hora-rec');
+
+  if(custoEl) custoEl.textContent = fmt(total);
+  if(minEl) minEl.textContent = fmt(horaMin);
+  if(recEl) recEl.textContent = fmt(horaRec);
 }
 function totalHoras(){
-  return escopo.reduce((s, item) => s + (+item.horas || 0), 0);
+  return escopo.reduce((s, item) => s + (Number(item.horas) || 0), 0);
 }
 function valorRecomendado(){
-  return totalHoras() * horaRec;
+  return totalHoras() * (Number(horaRec) || 0);
 }
 function calcTudo(){
   calcHora();
+
   const h = totalHoras();
   const valor = valorRecomendado();
-  document.getElementById('total-horas').textContent = fmtH(h);
-  document.getElementById('valor-final').textContent = fmt(valor);
 
-  document.getElementById('alerta-final').innerHTML = h
-    ? '<div class="alerta ok">Esse valor é calculado com base na sua hora recomendada e nas horas internas do escopo.</div>'
-    : '<div class="alerta warn">Adicione entregas ao escopo para calcular o valor recomendado.</div>';
+  const totalHorasEl = document.getElementById('total-horas');
+  const valorFinalEl = document.getElementById('valor-final');
+  const alertaEl = document.getElementById('alerta-final');
+
+  if(totalHorasEl) totalHorasEl.textContent = fmtH(h);
+  if(valorFinalEl) valorFinalEl.textContent = fmt(valor);
+
+  if(alertaEl){
+    alertaEl.innerHTML = h
+      ? '<div class="alerta ok">Esse valor é calculado com base na sua hora recomendada e nas horas internas do escopo.</div>'
+      : '<div class="alerta warn">Adicione entregas ao escopo para calcular o valor recomendado.</div>';
+  }
 
   renderPreview();
 }
 function addDemanda(){
-  const nome = demanda_nome.value.trim();
-  const horas = +demanda_horas.value;
-  if(!nome || !horas){
+  const nomeEl = document.getElementById('demanda_nome');
+  const horasEl = document.getElementById('demanda_horas');
+
+  const nome = nomeEl ? nomeEl.value.trim() : '';
+  const horas = horasEl ? Number(horasEl.value.replace(',', '.')) : 0;
+
+  if(!nome || !horas || horas <= 0){
     alert('Preencha a entrega e as horas internas estimadas.');
     return;
   }
-  escopo.push({nome, horas});
-  demanda_nome.value = '';
-  demanda_horas.value = '';
+
+  escopo.push({ nome, horas });
+
+  nomeEl.value = '';
+  horasEl.value = '';
+
   renderEscopo();
   calcTudo();
 }
@@ -886,6 +911,8 @@ function removeDemanda(i){
 function renderEscopo(){
   const card = document.getElementById('escopo-card');
   const lista = document.getElementById('lista-escopo');
+
+  if(!card || !lista) return;
 
   if(!escopo.length){
     card.style.display = 'none';
@@ -1027,16 +1054,25 @@ async function renderHistorico(){
 
 document.addEventListener('DOMContentLoaded', () => {
   iniciarSupabase();
+
+  const nomeEl = document.getElementById('demanda_nome');
+  const horasEl = document.getElementById('demanda_horas');
+
+  if(nomeEl){
+    nomeEl.addEventListener('keypress', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); addDemanda(); }
+    });
+  }
+
+  if(horasEl){
+    horasEl.addEventListener('keypress', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); addDemanda(); }
+    });
+  }
+
   calcTudo();
   renderEscopo();
   renderPreview();
-
-  demanda_nome.addEventListener('keypress', e => {
-    if(e.key === 'Enter'){ e.preventDefault(); addDemanda(); }
-  });
-  demanda_horas.addEventListener('keypress', e => {
-    if(e.key === 'Enter'){ e.preventDefault(); addDemanda(); }
-  });
 });
 </script>
 </body>
