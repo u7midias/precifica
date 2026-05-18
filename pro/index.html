@@ -387,19 +387,27 @@ input:focus,select:focus,textarea:focus{
     <div class="card">
       <div class="card-title">
         <div class="num">+</div>
-        <div class="section-label">Acesse sua conta</div>
+        <div class="section-label">Entrar ou criar conta</div>
       </div>
-      <p class="helper">Entre para salvar suas propostas na nuvem e acessar seu histórico depois.</p>
 
-      <label>E-mail</label>
-      <input type="email" id="auth_email" placeholder="seuemail@email.com">
+      <p class="helper">
+        Se você ainda não tem conta, preencha seu e-mail, crie uma senha e clique em <strong>Criar minha conta</strong>.
+        Se já tem conta, use o mesmo e-mail e senha e clique em <strong>Entrar</strong>.
+      </p>
 
-      <label>Senha</label>
+      <label>Seu e-mail</label>
+      <input type="email" id="auth_email" placeholder="exemplo@email.com">
+
+      <label>Crie ou digite sua senha</label>
       <input type="password" id="auth_senha" placeholder="mínimo 6 caracteres">
 
       <div class="actions">
-        <button class="btn btn-primary" onclick="entrar()">Entrar</button>
-        <button class="btn" onclick="cadastrar()">Criar conta</button>
+        <button class="btn btn-primary" onclick="cadastrar()">Criar minha conta</button>
+        <button class="btn" onclick="entrar()">Já tenho conta, entrar</button>
+      </div>
+
+      <div class="tip" style="margin-top:14px">
+        Na primeira vez, você cria uma senha. Nas próximas vezes, usa esse mesmo e-mail e senha para entrar.
       </div>
 
       <div id="auth-msg" style="margin-top:12px"></div>
@@ -703,7 +711,7 @@ async function cadastrar(){
   const password = auth_senha.value;
 
   if(!email || !password){
-    mostrarMsgAuth('Preencha e-mail e senha.', 'warn');
+    mostrarMsgAuth('Para criar ou entrar, preencha seu e-mail e uma senha com pelo menos 6 caracteres.', 'warn');
     return;
   }
 
@@ -714,7 +722,7 @@ async function cadastrar(){
     return;
   }
 
-  mostrarMsgAuth('Conta criada. Se o Supabase pedir confirmação de e-mail, confirme antes de entrar.', 'ok');
+  mostrarMsgAuth('Conta criada. Agora tente entrar com esse mesmo e-mail e senha. Se aparecer pedido de confirmação, confira seu e-mail.', 'ok');
 }
 
 async function entrar(){
@@ -725,7 +733,7 @@ async function entrar(){
   const password = auth_senha.value;
 
   if(!email || !password){
-    mostrarMsgAuth('Preencha e-mail e senha.', 'warn');
+    mostrarMsgAuth('Para criar ou entrar, preencha seu e-mail e uma senha com pelo menos 6 caracteres.', 'warn');
     return;
   }
 
