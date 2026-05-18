@@ -702,6 +702,7 @@ let horaRec = 0;
 let escopo = [];
 let sb = null;
 let usuarioAtual = null;
+let historicoCache = [];
 
 // CONFIGURAÇÃO SUPABASE
 // Cole aqui os dados do seu projeto Supabase:
@@ -1017,6 +1018,42 @@ async function salvarHistorico(){
   renderHistorico();
 }
 
+
+function carregarPropostaDoHistorico(id){
+  const p = historicoCache.find(item => item.id === id);
+
+  if(!p){
+    alert('Proposta não encontrada no histórico.');
+    return;
+  }
+
+  cliente_nome.value = p.cliente_nome || '';
+  titulo_servico.value = p.titulo_servico || '';
+  resumo_proposta.value = p.resumo || '';
+  valor_proposta.value = p.valor || '';
+  tipo_cobranca.value = p.tipo_cobranca || 'Mensal';
+  forma_pagamento.value = p.forma_pagamento || 'Pix';
+  parcelamento_max.value = p.parcelamento_max || '3x';
+  validade_proposta.value = p.validade || '7 dias';
+  obs_proposta.value = p.observacoes || '';
+
+  escopo = (p.itens_proposta || []).map(item => ({
+    nome: item.nome,
+    horas: Number(item.horas) || 0
+  }));
+
+  renderEscopo();
+  calcTudo();
+  renderPreview();
+
+  irPara('proposta');
+
+  setTimeout(() => {
+    const preview = document.getElementById('preview-proposta');
+    if(preview) preview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
 async function renderHistorico(){
   const el = document.getElementById('historico-lista');
 
@@ -1035,19 +1072,27 @@ async function renderHistorico(){
     return;
   }
 
-  if(!data || !data.length){
+  historicoCache = data || [];
+
+  if(!historicoCache.length){
     el.innerHTML = '<div class="alerta warn">Nenhuma proposta salva ainda.</div>';
     return;
   }
 
-  el.innerHTML = data.map(p => `
+  el.innerHTML = historicoCache.map(p => `
     <div class="history-card">
-      <div>
+      <div style="flex:1">
         <strong>${p.cliente_nome}</strong>
         <p>${p.titulo_servico || 'Proposta de Serviço'} · ${new Date(p.created_at).toLocaleDateString('pt-BR')}</p>
         <p style="font-size:13px;margin-top:6px">${(p.itens_proposta || []).map(e => e.nome).join(' • ')}</p>
       </div>
-      <div style="font-family:DM Mono;font-weight:800;color:var(--accent-dark)">${fmt(p.valor)}</div>
+
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+        <div style="font-family:DM Mono;font-weight:800;color:var(--accent-dark)">${fmt(p.valor)}</div>
+        <button class="btn btn-primary" onclick="carregarPropostaDoHistorico('${p.id}')">
+          Abrir / gerar PDF
+        </button>
+      </div>
     </div>
   `).join('');
 }
