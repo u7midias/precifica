@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precifica+ Beta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f0ea;
+    --surface: #fffdf8;
+    --surface-2: #f7efe3;
+    --border: #e4d8c7;
+    --border-strong: #c8b59b;
+    --text: #211a14;
+    --muted: #74685b;
+    --hint: #a79b8d;
+    --accent: #7a4f2a;
+    --accent-dark: #4d2f19;
+    --gold: #c49a5a;
+    --green-bg: #edf7f0;
+    --green-text: #17613b;
+    --green-border: #b6dec7;
+    --amber-bg: #fff4df;
+    --amber-text: #7a4f0d;
+    --amber-border: #f0d39a;
+    --red-bg: #fdecea;
+    --red-text: #8b1f1f;
+    --red-border: #f5b8b8;
+    --radius: 18px;
+    --radius-sm: 11px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(196,154,90,.28), transparent 34%),
+      linear-gradient(135deg, #f8f3eb 0%, #eee7dc 100%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 980px; margin: 0 auto; }
+
+  header {
+    padding: 1.6rem;
+    border: 1px solid rgba(196,154,90,.34);
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(255,253,248,.95), rgba(241,229,213,.82));
+    box-shadow: 0 18px 45px rgba(77,47,25,.08);
+    margin-bottom: 1.5rem;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.05;
+    letter-spacing: -1.2px;
+    margin-bottom: 10px;
+  }
+
+  header p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 680px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .step {
+    background: rgba(255,253,248,.75);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .card {
+    background: rgba(255,253,248,.94);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.35rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 12px 30px rgba(77,47,25,.06);
+    backdrop-filter: blur(10px);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  label {
+    font-size: 12px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  label:first-child { margin-top: 0; }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: .15s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(122,79,42,.08);
+  }
+
+  .btn {
+    padding: 10px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 10px 22px rgba(77,47,25,.16);
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .metric {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: -0.6px;
+  }
+
+  .metric-sub {
+    font-size: 11px;
+    color: var(--hint);
+    margin-top: 3px;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .item:last-child { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    background: #efe8ff;
+    color: #4b2b86;
+    border: 1px solid #d6c3ff;
+    white-space: nowrap;
+  }
+
+  .result-card {
+    text-align: center;
+    background: linear-gradient(135deg, #fffdf8, #f5ede2);
+    position: sticky;
+    top: 16px;
+  }
+
+  .big-value {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(34px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--accent-dark);
+    letter-spacing: -1.8px;
+    margin: 8px 0;
+  }
+
+  .alerta {
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    border: 1px solid;
+    text-align: left;
+  }
+
+  .ok { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
+  .warn { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
+  .bad { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
+
+  .tip {
+    font-size: 12px;
+    color: var(--muted);
+    background: rgba(247,239,227,.8);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    line-height: 1.45;
+  }
+
+  .footer-note {
+    text-align: center;
+    color: var(--hint);
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 760px) {
+    body { padding: 1rem; }
+    .grid, .steps, .metric-grid { grid-template-columns: 1fr; }
+    .result-card { position: static; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">Sistema Beta</div>
+  <h1>Precifica+</h1>
+  <p>Descubra quanto cobrar pelos seus serviços sem trabalhar no prejuízo.</p>
+</header>
+
+<div class="steps">
+  <div class="step">1. Configure sua hora</div>
+  <div class="step">2. Monte o escopo</div>
+  <div class="step">3. Veja quanto cobrar</div>
+</div>
+
+<div class="grid">
+  <div>
+    <div class="card">
+      <p class="section-label">Configuração interna</p>
+
+      <label>Custo de vida mensal (R$)</label>
+      <input type="number" id="custo_vida" value="2500" oninput="calcTudo()">
+
+      <label>Ferramentas, internet e assinaturas (R$)</label>
+      <input type="number" id="custo_tools" value="300" oninput="calcTudo()">
+
+      <label>Impostos / MEI / taxas (R$)</label>
+      <input type="number" id="custo_imposto" value="300" oninput="calcTudo()">
+
+      <label>Lucro desejado no mês (R$)</label>
+      <input type="number" id="lucro" value="1500" oninput="calcTudo()">
+
+      <label>Horas disponíveis para vender no mês</label>
+      <input type="number" id="horas_mes" value="120" oninput="calcTudo()">
+
+      <label>Margem de segurança (%)</label>
+      <input type="number" id="margem" value="20" oninput="calcTudo()">
+
+      <div class="tip" style="margin-top:14px">
+        Esses dados são internos. Eles servem para calcular seu preço com mais segurança, não para mostrar ao cliente.
+      </div>
+    </div>
+
+    <div class="metric-grid" style="margin-bottom:1rem">
+      <div class="metric">
+        <div class="metric-label">Custo + lucro</div>
+        <div class="metric-value" id="r-custo">R$ 0</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Hora mínima</div>
+        <div class="metric-value" id="r-hora-min">R$ 0</div>
+        <div class="metric-sub">piso seguro</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Hora recomendada</div>
+        <div class="metric-value" id="r-hora-rec">R$ 0</div>
+        <div class="metric-sub">use no cálculo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Montar escopo</p>
+
+      <label>Nome da demanda</label>
+      <input type="text" id="demanda_nome" placeholder="Ex: Gestão de Instagram mensal">
+
+      <label>Horas estimadas</label>
+      <div style="display:flex;gap:8px">
+        <input type="number" id="demanda_horas" placeholder="Horas" step="0.5">
+        <button type="button" class="btn btn-primary" style="min-width:120px" onclick="addDemanda()">Adicionar</button>
+      </div>
+
+      <div class="tip" style="margin-top:14px">
+        Coloque tudo que consome tempo: produção, reunião, ajustes, atendimento, planejamento, deslocamento e revisão.
+      </div>
+    </div>
+
+    <div class="card" id="escopo-card" style="display:none">
+      <p class="section-label">Escopo calculado</p>
+      <div id="lista-escopo"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card result-card">
+      <p class="section-label">Resultado da precificação</p>
+
+      <div class="metric-label">Total estimado de horas</div>
+      <div class="metric-value" id="total-horas" style="font-size:30px;margin-bottom:18px">0h</div>
+
+      <div class="metric-label">Você deveria cobrar</div>
+      <div class="big-value" id="valor-final">R$ 0,00</div>
+
+      <div class="metric-sub" id="formula-final">Configure sua hora e adicione demandas</div>
+
+      <div style="margin-top:16px" id="alerta-final"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Simular valor de mercado</p>
+      <label>Quero cobrar (R$)</label>
+      <input type="number" id="valor_custom" placeholder="Ex: 1500" oninput="simularValor()">
+      <div style="margin-top:10px" id="alerta-custom"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Leitura estratégica</p>
+      <div class="tip">
+        A beta não gera proposta, não salva clientes e não baixa PDF. Ela serve para dar clareza rápida sobre quanto cobrar e evitar prejuízo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">Precifica+ Beta — ferramenta local, sem armazenamento de dados.</div>
+
+</div>
+
+<script>
+let horaMin = 0;
+let horaRec = 0;
+let escopo = [];
+
+function fmt(v) {
+  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function fmtH(v) {
+  return Number(v || 0).toFixed(1).replace('.', ',') + 'h';
+}
+
+function calcHora() {
+  const vida = +document.getElementById('custo_vida').value || 0;
+  const tools = +document.getElementById('custo_tools').value || 0;
+  const imp = +document.getElementById('custo_imposto').value || 0;
+  const lucro = +document.getElementById('lucro').value || 0;
+  const horas = +document.getElementById('horas_mes').value || 1;
+  const margem = +document.getElementById('margem').value || 0;
+
+  const total = vida + tools + imp + lucro;
+  horaMin = total / horas;
+  horaRec = horaMin * (1 + margem / 100);
+
+  document.getElementById('r-custo').textContent = fmt(total);
+  document.getElementById('r-hora-min').textContent = fmt(horaMin);
+  document.getElementById('r-hora-rec').textContent = fmt(horaRec);
+}
+
+function addDemanda() {
+  const nome = document.getElementById('demanda_nome').value.trim();
+  const horas = +document.getElementById('demanda_horas').value;
+
+  if (!nome || !horas) {
+    alert('Preencha o nome da demanda e a quantidade de horas.');
+    return;
+  }
+
+  escopo.push({ nome, horas });
+  document.getElementById('demanda_nome').value = '';
+  document.getElementById('demanda_horas').value = '';
+
+  renderEscopo();
+  
+document.getElementById('demanda_nome').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addDemanda();
+  }
+});
+
+document.getElementById('demanda_horas').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addDemanda();
+  }
+});
+
+
+calcTudo();
+}
+
+function removeDemanda(i) {
+  escopo.splice(i, 1);
+  renderEscopo();
+  calcTudo();
+}
+
+function renderEscopo() {
+  const card = document.getElementById('escopo-card');
+  const lista = document.getElementById('lista-escopo');
+
+  if (!escopo.length) {
+    card.style.display = 'none';
+    lista.innerHTML = '';
+    return;
+  }
+
+  card.style.display = 'block';
+  lista.innerHTML = escopo.map((item, i) => `
+    <div class="item">
+      <span style="flex:1;font-size:14px">${item.nome}</span>
+      <span class="badge">${fmtH(item.horas)}</span>
+      <button class="btn" style="padding:6px 10px" onclick="removeDemanda(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function totalHoras() {
+  return escopo.reduce((s, item) => s + item.horas, 0);
+}
+
+function calcTudo() {
+  calcHora();
+
+  const h = totalHoras();
+  const valor = h * horaRec;
+
+  document.getElementById('total-horas').textContent = fmtH(h);
+  document.getElementById('valor-final').textContent = fmt(valor);
+
+  if (!h) {
+    document.getElementById('formula-final').textContent = 'Adicione pelo menos uma demanda';
+    document.getElementById('alerta-final').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('formula-final').textContent = `${fmtH(h)} × ${fmt(horaRec)}/h`;
+
+  document.getElementById('alerta-final').innerHTML = `
+    <div class="alerta ok">
+      Valor recomendado calculado com base nos seus custos, lucro desejado, horas disponíveis e margem de segurança.
+    </div>
+  `;
+
+  simularValor();
+}
+
+function simularValor() {
+  const valor = +document.getElementById('valor_custom').value || 0;
+  const h = totalHoras();
+  const el = document.getElementById('alerta-custom');
+
+  if (!valor || !h) {
+    el.innerHTML = '';
+    return;
+  }
+
+  const horaCalculada = valor / h;
+
+  if (horaCalculada >= horaRec) {
+    el.innerHTML = `<div class="alerta ok">Bom negócio. Esse valor equivale a ${fmt(horaCalculada)}/h, acima da sua hora recomendada.</div>`;
+  } else if (horaCalculada >= horaMin) {
+    el.innerHTML = `<div class="alerta warn">Atenção. Esse valor equivale a ${fmt(horaCalculada)}/h. Não dá prejuízo, mas está abaixo do ideal.</div>`;
+  } else {
+    el.innerHTML = `<div class="alerta bad">Prejuízo provável. Esse valor equivale a ${fmt(horaCalculada)}/h, abaixo da sua hora mínima.</div>`;
+  }
+}
+
+calcTudo();
+</script>
+
+</body>
+</html>
