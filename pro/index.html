@@ -384,33 +384,59 @@ input:focus,select:focus,textarea:focus{
   </section>
 
   <section id="auth-section" class="auth-box no-print">
-    <div class="card">
+    <div id="login-card" class="card">
       <div class="card-title">
         <div class="num">+</div>
-        <div class="section-label">Entrar ou criar conta</div>
+        <div class="section-label">Acesse sua conta</div>
       </div>
 
       <p class="helper">
-        Se você ainda não tem conta, preencha seu e-mail, crie uma senha e clique em <strong>Criar minha conta</strong>.
-        Se já tem conta, use o mesmo e-mail e senha e clique em <strong>Entrar</strong>.
+        Entre para salvar suas propostas na nuvem e acessar seu histórico depois.
       </p>
 
-      <label>Seu e-mail</label>
-      <input type="email" id="auth_email" placeholder="exemplo@email.com">
+      <label>E-mail</label>
+      <input type="email" id="login_email" placeholder="seuemail@email.com">
 
-      <label>Crie ou digite sua senha</label>
-      <input type="password" id="auth_senha" placeholder="mínimo 6 caracteres">
+      <label>Senha</label>
+      <input type="password" id="login_senha" placeholder="sua senha">
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="entrar()">Entrar</button>
+        <button class="btn" onclick="mostrarCadastro()">Criar conta</button>
+      </div>
+
+      <div id="login-msg" style="margin-top:12px"></div>
+    </div>
+
+    <div id="cadastro-card" class="card hidden">
+      <div class="card-title">
+        <div class="num">+</div>
+        <div class="section-label">Criar conta</div>
+      </div>
+
+      <p class="helper">
+        Preencha seu e-mail e crie uma senha para acessar o Precifica+ PRO.
+      </p>
+
+      <label>E-mail</label>
+      <input type="email" id="cadastro_email" placeholder="seuemail@email.com">
+
+      <label>Crie uma senha</label>
+      <input type="password" id="cadastro_senha" placeholder="mínimo 6 caracteres">
+
+      <label>Confirmar senha</label>
+      <input type="password" id="cadastro_senha_confirmar" placeholder="digite a senha novamente">
 
       <div class="actions">
         <button class="btn btn-primary" onclick="cadastrar()">Criar minha conta</button>
-        <button class="btn" onclick="entrar()">Já tenho conta, entrar</button>
+        <button class="btn" onclick="mostrarLogin()">Já tenho conta</button>
       </div>
 
       <div class="tip" style="margin-top:14px">
-        Na primeira vez, você cria uma senha. Nas próximas vezes, usa esse mesmo e-mail e senha para entrar.
+        Use um e-mail válido. Dependendo da configuração do Supabase, pode ser necessário confirmar o e-mail.
       </div>
 
-      <div id="auth-msg" style="margin-top:12px"></div>
+      <div id="cadastro-msg" style="margin-top:12px"></div>
     </div>
   </section>
 
@@ -682,10 +708,22 @@ let usuarioAtual = null;
 const SUPABASE_URL = "https://bumhjyhaqewcfwojlgwc.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1bWhqeWhhcWV3Y2Z3b2psZ3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjkxNTksImV4cCI6MjA5MzUwNTE1OX0.2l7naJq1_sug0zkENLH3A4yyaiXKjGyEbFM4BbBPzFs";
 
-function mostrarMsgAuth(texto, tipo='warn'){
-  const el = document.getElementById('auth-msg');
+function mostrarMsgAuth(texto, tipo='warn', alvo='login'){
+  const el = document.getElementById(alvo === 'cadastro' ? 'cadastro-msg' : 'login-msg');
   if(!el) return;
   el.innerHTML = `<div class="alerta ${tipo}">${texto}</div>`;
+}
+
+function mostrarCadastro(){
+  document.getElementById('login-card').classList.add('hidden');
+  document.getElementById('cadastro-card').classList.remove('hidden');
+  document.getElementById('login-msg').innerHTML = '';
+}
+
+function mostrarLogin(){
+  document.getElementById('cadastro-card').classList.add('hidden');
+  document.getElementById('login-card').classList.remove('hidden');
+  document.getElementById('cadastro-msg').innerHTML = '';
 }
 
 async function iniciarSupabase(){
@@ -707,40 +745,54 @@ async function cadastrar(){
   if(!sb){ await iniciarSupabase(); }
   if(!sb) return;
 
-  const email = auth_email.value.trim();
-  const password = auth_senha.value;
+  const email = document.getElementById('cadastro_email').value.trim();
+  const password = document.getElementById('cadastro_senha').value;
+  const confirm = document.getElementById('cadastro_senha_confirmar').value;
 
-  if(!email || !password){
-    mostrarMsgAuth('Para criar ou entrar, preencha seu e-mail e uma senha com pelo menos 6 caracteres.', 'warn');
+  if(!email || !password || !confirm){
+    mostrarMsgAuth('Preencha e-mail, senha e confirmação de senha.', 'warn', 'cadastro');
     return;
   }
 
-  const { error } = await sb.auth.signUp({ email, password });
+  if(password.length < 6){
+    mostrarMsgAuth('A senha precisa ter pelo menos 6 caracteres.', 'warn', 'cadastro');
+    return;
+  }
+
+  if(password !== confirm){
+    mostrarMsgAuth('As senhas não conferem.', 'bad', 'cadastro');
+    return;
+  }
+
+  const { data, error } = await sb.auth.signUp({ email, password });
 
   if(error){
-    mostrarMsgAuth(error.message, 'bad');
+    mostrarMsgAuth(error.message, 'bad', 'cadastro');
     return;
   }
 
-  mostrarMsgAuth('Conta criada. Agora tente entrar com esse mesmo e-mail e senha. Se aparecer pedido de confirmação, confira seu e-mail.', 'ok');
+  mostrarMsgAuth('Conta criada! Agora entre com seu e-mail e senha.', 'ok', 'login');
+  document.getElementById('login_email').value = email;
+  document.getElementById('login_senha').value = password;
+  mostrarLogin();
 }
 
 async function entrar(){
   if(!sb){ await iniciarSupabase(); }
   if(!sb) return;
 
-  const email = auth_email.value.trim();
-  const password = auth_senha.value;
+  const email = document.getElementById('login_email').value.trim();
+  const password = document.getElementById('login_senha').value;
 
   if(!email || !password){
-    mostrarMsgAuth('Para criar ou entrar, preencha seu e-mail e uma senha com pelo menos 6 caracteres.', 'warn');
+    mostrarMsgAuth('Preencha e-mail e senha para entrar.', 'warn', 'login');
     return;
   }
 
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
   if(error){
-    mostrarMsgAuth(error.message, 'bad');
+    mostrarMsgAuth(error.message, 'bad', 'login');
     return;
   }
 
