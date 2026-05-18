@@ -108,6 +108,66 @@ footer{padding:38px 0;text-align:center;background:var(--accent-dark);color:#d6c
   pointer-events: none;
 }
 
+
+.pricing-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+align-items:stretch;
+max-width:980px;
+margin:0 auto;
+}
+
+.plan-card{
+max-width:none;
+margin:0;
+text-align:left;
+display:flex;
+flex-direction:column;
+}
+
+.plan-card h3{
+font-size:30px;
+letter-spacing:-1px;
+margin-bottom:16px;
+}
+
+.plan-tag{
+display:inline-block;
+align-self:flex-start;
+font-size:12px;
+font-weight:800;
+letter-spacing:1px;
+color:#6d4c32;
+background:#f7f4ef;
+border:1px solid #e7dccb;
+border-radius:999px;
+padding:8px 12px;
+margin-bottom:18px;
+}
+
+.featured-plan{
+border:2px solid #6d4c32;
+box-shadow:0 24px 70px rgba(42,26,16,.12);
+}
+
+.plan-desc{
+color:#666;
+font-size:16px;
+line-height:1.6;
+min-height:78px;
+}
+
+.price span{
+font-size:22px;
+letter-spacing:-1px;
+color:#6d4c32;
+}
+
+.plan-card .features{
+flex:1;
+}
+
 </style>
 </head>
 <body>
@@ -234,30 +294,93 @@ footer{padding:38px 0;text-align:center;background:var(--accent-dark);color:#d6c
   <strong>Seu teste gratuito já foi usado.</strong>
   Para continuar criando precificações, desbloqueie o acesso completo ao Precifica+.
   <div style="margin-top:14px">
-    <a href="COLE_AQUI_O_LINK_DO_CHECKOUT" class="btn btn-primary">Garantir o Precifica+ PRO</a>
+    <a href="COLE_AQUI_O_LINK_DO_CHECKOUT_PRO" class="btn btn-primary">Garantir o Precifica+ PRO</a>
   </div>
 </div>
 
 <section class="pricing" id="preco">
-  <div class="container">
-    <div class="price-box">
-      <div class="logo">Precifica<span>+</span></div>
-      <h2 class="section-title" style="font-size:38px;margin:14px auto 8px">Garanta o Precifica+ PRO</h2>
-      <p style="color:var(--muted);line-height:1.6">Tenha acesso ao sistema para criar suas precificações sempre que precisar.</p>
-      <div class="old">de R$97</div>
-      <div class="price">R$29</div>
-      <p style="color:var(--muted);font-size:16px">Pagamento único • acesso imediato</p>
-      <ul class="features">
-        <li>✔ Sistema completo de precificação completo</li>
-        <li>✔ Demandas ilimitadas</li>
-        <li>✔ Cálculo automático da hora mínima e recomendada</li>
-        <li>✔ Montagem de escopo com até 3 demandas no teste por horas</li>
-        <li>✔ Simulação de valores de mercado</li>
-        <li>✔ Clareza para enviar propostas sem trabalhar no prejuízo</li>
-      </ul>
-      <a href="COLE_AQUI_O_LINK_DO_CHECKOUT" class="btn btn-primary" style="width:100%">Garantir o Precifica+ PRO</a>
-    </div>
-  </div>
+
+<div class="container">
+
+<div style="text-align:center;max-width:760px;margin:0 auto 42px auto;">
+
+<div class="logo" style="margin-bottom:10px;">
+Precifica<span>+</span>
+</div>
+
+<h2 class="section-title">
+Escolha seu plano
+</h2>
+
+<p class="section-sub" style="margin-left:auto;margin-right:auto;margin-bottom:0;">
+Comece com a precificação essencial ou desbloqueie a versão PRO para salvar propostas, gerar apresentações prontas e acompanhar seus envios.
+</p>
+
+</div>
+
+<div class="pricing-grid">
+
+<div class="price-box plan-card">
+
+<div class="plan-tag">ESSENCIAL</div>
+
+<h3>Precifica+</h3>
+
+<div class="price">R$29<span>/mês</span></div>
+
+<p class="plan-desc">
+Para quem quer calcular preços com mais segurança e parar de cobrar no escuro.
+</p>
+
+<ul class="features">
+
+<li>✔ Sistema completo de precificação</li>
+<li>✔ Cálculo automático da sua hora</li>
+<li>✔ Montagem de escopo</li>
+<li>✔ Simulação de valor por projeto</li>
+<li>✔ Clareza para enviar propostas</li>
+
+</ul>
+
+<a href="COLE_AQUI_O_LINK_DO_CHECKOUT_PRO_PRECIFICA" class="btn btn-secondary" style="width:100%;">
+Garantir o Precifica+
+</a>
+
+</div>
+
+<div class="price-box plan-card featured-plan">
+
+<div class="plan-tag">MAIS COMPLETO</div>
+
+<h3>Precifica+ PRO</h3>
+
+<div class="price">R$99<span>/mês</span></div>
+
+<p class="plan-desc">
+Para quem quer organizar propostas, apresentar melhor o valor do serviço e acompanhar oportunidades.
+</p>
+
+<ul class="features">
+
+<li>✔ Tudo do Precifica+</li>
+<li>✔ Salva os dados das propostas</li>
+<li>✔ Gera apresentação de proposta pronta</li>
+<li>✔ Relatório de envio de propostas</li>
+<li>✔ Histórico para acompanhar negociações</li>
+<li>✔ Mais profissionalismo na venda</li>
+
+</ul>
+
+<a href="COLE_AQUI_O_LINK_DO_CHECKOUT_PRO_PRO" class="btn btn-primary" style="width:100%;">
+Garantir o Precifica+ PRO
+</a>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
 <section class="faq">
