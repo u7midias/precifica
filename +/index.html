@@ -284,7 +284,42 @@
     .grid, .steps, .metric-grid { grid-template-columns: 1fr; }
     .result-card { position: static; }
   }
+
+.support-btn{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:9999;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:13px 18px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#17613b,#1f8f55);
+  color:#fff;
+  text-decoration:none;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  box-shadow:0 16px 35px rgba(23,97,59,.25);
+}
+.support-btn:hover{transform:translateY(-1px)}
+@media(max-width:700px){
+  .support-btn{
+    right:14px;
+    bottom:14px;
+    padding:12px 15px;
+    font-size:13px;
+  }
+}
+
 </style>
+
+<script>
+const SUPORTE_WHATSAPP = "5511999999999"; // troque pelo seu número com DDI + DDD
+const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
+</script>
+
 </head>
 <body>
 <div class="container">
@@ -545,6 +580,20 @@ function simularValor() {
 }
 
 calcTudo();
+</script>
+
+
+<a class="support-btn" id="support-whatsapp" target="_blank" rel="noopener">
+  💬 Suporte
+</a>
+
+<script>
+(function(){
+  const btn = document.getElementById('support-whatsapp');
+  if(btn){
+    btn.href = "https://wa.me/" + SUPORTE_WHATSAPP + "?text=" + encodeURIComponent(SUPORTE_TEXTO);
+  }
+})();
 </script>
 
 </body>
