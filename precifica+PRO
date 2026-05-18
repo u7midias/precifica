@@ -671,8 +671,8 @@ let usuarioAtual = null;
 
 // CONFIGURAÇÃO SUPABASE
 // Cole aqui os dados do seu projeto Supabase:
-const SUPABASE_URL = "COLE_AQUI_SUA_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "COLE_AQUI_SUA_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://bumhjyhaqewcfwojlgwc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1bWhqeWhhcWV3Y2Z3b2psZ3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjkxNTksImV4cCI6MjA5MzUwNTE1OX0.2l7naJq1_sug0zkENLH3A4yyaiXKjGyEbFM4BbBPzFs";
 
 function mostrarMsgAuth(texto, tipo='warn'){
   const el = document.getElementById('auth-msg');
