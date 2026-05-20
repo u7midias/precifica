@@ -341,6 +341,27 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
     <div class="card">
       <p class="section-label">Configuração interna</p>
 
+      <!-- MODO DE COBRANÇA -->
+      <label>Como você costuma cobrar?</label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px">
+        <button type="button" class="modo-btn active" onclick="setModo('mensal')" id="modo-mensal"
+          style="padding:10px 6px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
+          Por mês
+        </button>
+        <button type="button" class="modo-btn" onclick="setModo('projeto')" id="modo-projeto"
+          style="padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
+          Por projeto
+        </button>
+        <button type="button" class="modo-btn" onclick="setModo('hora')" id="modo-hora"
+          style="padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
+          Por hora/aula
+        </button>
+      </div>
+      <div class="tip" id="modo-dica" style="margin-bottom:14px;margin-top:8px">
+        Social media, gestor de tráfego, assistente virtual — você atende clientes todo mês.
+      </div>
+
+      <!-- CAMPOS COMUNS -->
       <label>Custo de vida mensal (R$)</label>
       <input type="number" id="custo_vida" value="2500" oninput="calcTudo()">
 
@@ -353,8 +374,27 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
       <label>Lucro desejado no mês (R$)</label>
       <input type="number" id="lucro" value="1500" oninput="calcTudo()">
 
-      <label>Horas disponíveis para vender no mês</label>
-      <input type="number" id="horas_mes" value="120" oninput="calcTudo()">
+      <!-- MODO MENSAL -->
+      <div id="campos-mensal">
+        <label>Quantos clientes você atende por mês?</label>
+        <input type="number" id="clientes_mes" value="4" oninput="calcTudo()">
+        <label>Horas dedicadas por cliente no mês</label>
+        <input type="number" id="horas_por_cliente" value="30" step="0.5" oninput="calcTudo()">
+      </div>
+
+      <!-- MODO PROJETO -->
+      <div id="campos-projeto" style="display:none">
+        <label>Quantos projetos você quer fechar por mês?</label>
+        <input type="number" id="projetos_mes" value="2" oninput="calcTudo()">
+        <label>Horas médias por projeto</label>
+        <input type="number" id="horas_por_projeto" value="30" step="0.5" oninput="calcTudo()">
+      </div>
+
+      <!-- MODO HORA/AULA -->
+      <div id="campos-hora" style="display:none">
+        <label>Quantas horas ou aulas você dá por mês?</label>
+        <input type="number" id="horas_aula_mes" value="60" oninput="calcTudo()">
+      </div>
 
       <label>Margem de segurança (%)</label>
       <input type="number" id="margem" value="20" oninput="calcTudo()">
@@ -443,6 +483,7 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
 let horaMin = 0;
 let horaRec = 0;
 let escopo = [];
+let modoAtual = 'mensal';
 
 function fmt(v) {
   return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -452,13 +493,57 @@ function fmtH(v) {
   return Number(v || 0).toFixed(1).replace('.', ',') + 'h';
 }
 
+function setModo(modo) {
+  modoAtual = modo;
+
+  // Atualiza botões
+  document.querySelectorAll('.modo-btn').forEach(btn => {
+    btn.style.background = 'var(--surface)';
+    btn.style.color = 'var(--muted)';
+    btn.style.borderColor = 'var(--border)';
+  });
+  const ativo = document.getElementById('modo-' + modo);
+  ativo.style.background = 'linear-gradient(135deg,var(--accent-dark),var(--accent))';
+  ativo.style.color = '#fff';
+  ativo.style.borderColor = 'var(--accent)';
+
+  // Mostra/oculta campos
+  document.getElementById('campos-mensal').style.display = modo === 'mensal' ? 'block' : 'none';
+  document.getElementById('campos-projeto').style.display = modo === 'projeto' ? 'block' : 'none';
+  document.getElementById('campos-hora').style.display = modo === 'hora' ? 'block' : 'none';
+
+  // Atualiza dica
+  const dicas = {
+    mensal: 'Social media, gestor de tráfego, assistente virtual — você atende clientes todo mês.',
+    projeto: 'Fotógrafo, designer, editor de vídeo, dev — você entrega um projeto por vez.',
+    hora: 'Professor, consultor, coach, mentor — você cobra por hora ou aula.'
+  };
+  document.getElementById('modo-dica').textContent = dicas[modo];
+
+  calcTudo();
+}
+
+function getHorasMes() {
+  if (modoAtual === 'mensal') {
+    const clientes = +document.getElementById('clientes_mes').value || 1;
+    const hPorCliente = +document.getElementById('horas_por_cliente').value || 1;
+    return clientes * hPorCliente;
+  } else if (modoAtual === 'projeto') {
+    const projetos = +document.getElementById('projetos_mes').value || 1;
+    const hPorProjeto = +document.getElementById('horas_por_projeto').value || 1;
+    return projetos * hPorProjeto;
+  } else {
+    return +document.getElementById('horas_aula_mes').value || 1;
+  }
+}
+
 function calcHora() {
   const vida = +document.getElementById('custo_vida').value || 0;
   const tools = +document.getElementById('custo_tools').value || 0;
   const imp = +document.getElementById('custo_imposto').value || 0;
   const lucro = +document.getElementById('lucro').value || 0;
-  const horas = +document.getElementById('horas_mes').value || 1;
   const margem = +document.getElementById('margem').value || 0;
+  const horas = getHorasMes();
 
   const total = vida + tools + imp + lucro;
   horaMin = total / horas;
@@ -483,23 +568,7 @@ function addDemanda() {
   document.getElementById('demanda_horas').value = '';
 
   renderEscopo();
-  
-document.getElementById('demanda_nome').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    addDemanda();
-  }
-});
-
-document.getElementById('demanda_horas').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    addDemanda();
-  }
-});
-
-
-calcTudo();
+  calcTudo();
 }
 
 function removeDemanda(i) {
@@ -551,7 +620,7 @@ function calcTudo() {
 
   document.getElementById('alerta-final').innerHTML = `
     <div class="alerta ok">
-      Valor recomendado calculado com base nos seus custos, lucro desejado, horas disponíveis e margem de segurança.
+      Valor recomendado calculado com base nos seus custos, lucro desejado e margem de segurança.
     </div>
   `;
 
@@ -579,7 +648,15 @@ function simularValor() {
   }
 }
 
-calcTudo();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('demanda_nome').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
+  });
+  document.getElementById('demanda_horas').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
+  });
+  calcTudo();
+});
 </script>
 
 
