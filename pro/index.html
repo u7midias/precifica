@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <title>Precifica+ PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -660,60 +662,88 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ PRO.";
       </div>
     </div>
 
-    <div class="preview" id="preview-proposta">
-      <div class="preview-hero">
-        <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.72;margin-bottom:12px;font-weight:800">Proposta comercial</div>
-        <div class="preview-title" id="pv-titulo">Proposta de Serviço</div>
-        <div id="pv-cliente" style="opacity:.82">Cliente</div>
-      </div>
-
-      <div class="preview-body">
-        <div class="preview-grid">
+    <div id="preview-proposta" style="background:#fff;border-radius:28px;overflow:hidden;border:1px solid #e4d3bd;box-shadow:0 24px 60px rgba(61,36,19,.10);margin-top:8px;">
+      <div style="height:6px;background:linear-gradient(90deg,#2b1d12,#7a4f2a,#c49a5a);"></div>
+      <div style="padding:44px 48px 36px;background:linear-gradient(135deg,#2b1d12 0%,#5c3520 60%,#7a4f2a 100%);color:#fff;position:relative;overflow:hidden;">
+        <div style="position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(196,154,90,.13);pointer-events:none;"></div>
+        <div style="position:absolute;right:60px;bottom:-80px;width:180px;height:180px;border-radius:50%;background:rgba(196,154,90,.08);pointer-events:none;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;position:relative;">
           <div>
-            <div class="preview-section">
-              <h3>Resumo</h3>
-              <p id="pv-resumo">Proposta estruturada de acordo com o escopo solicitado e as condições comerciais definidas.</p>
-            </div>
-
-            <div class="preview-section">
-              <h3>Escopo do serviço</h3>
-              <div id="pv-escopo">—</div>
-            </div>
-
-            <div class="preview-section">
-              <h3>Observações</h3>
-              <p id="pv-obs">Demandas fora do escopo poderão ser orçadas separadamente.</p>
+            <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c49a5a;font-weight:800;margin-bottom:14px;">✦ Proposta Comercial</div>
+            <div id="pv-titulo" style="font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.1;margin-bottom:10px;">Proposta de Serviço</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:28px;height:2px;background:#c49a5a;border-radius:2px;"></div>
+              <div id="pv-cliente" style="font-size:15px;color:rgba(255,255,255,.75);font-weight:600;">Cliente</div>
             </div>
           </div>
-
+          <div style="text-align:right;">
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px;">Gerado por</div>
+            <div style="font-size:20px;font-weight:900;letter-spacing:-0.5px;color:#fff;">Precifica<span style="color:#c49a5a;">+</span></div>
+            <div id="pv-data" style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:40px 48px;background:#fffdf8;">
+        <div style="display:grid;grid-template-columns:1.3fr 0.7fr;gap:36px;align-items:start;">
           <div>
-            <div class="price-box">
-              <div class="metric-label">Investimento</div>
-              <div class="price" id="pv-valor">R$ 0,00</div>
-              <p id="pv-tipo" style="font-size:12px;margin-top:4px">Mensal</p>
+            <div style="margin-bottom:28px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <div style="width:3px;height:18px;background:#7a4f2a;border-radius:3px;"></div>
+                <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#7a4f2a;">Sobre a proposta</div>
+              </div>
+              <p id="pv-resumo" style="font-size:14px;color:#4a3a2b;line-height:1.75;background:#f8f2ea;border-radius:14px;padding:16px 18px;border-left:3px solid #c49a5a;">Proposta estruturada de acordo com o escopo solicitado e as condições comerciais definidas.</p>
             </div>
-
-            <div class="side-info">
-              <small>Pagamento</small>
-              <strong id="pv-pagamento">Pix</strong>
+            <div style="margin-bottom:28px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                <div style="width:3px;height:18px;background:#7a4f2a;border-radius:3px;"></div>
+                <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#7a4f2a;">O que está incluído</div>
+              </div>
+              <div id="pv-escopo" style="color:#4a3a2b;"></div>
             </div>
-
-            <div class="side-info">
-              <small>Parcelamento</small>
-              <strong id="pv-parcelamento">Até 3x</strong>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <div style="width:3px;height:18px;background:#c49a5a;border-radius:3px;"></div>
+                <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#7a4f2a;">Observações</div>
+              </div>
+              <p id="pv-obs" style="font-size:13px;color:#74675b;line-height:1.65;padding:14px 16px;background:#f5f0e8;border-radius:12px;">Demandas fora do escopo poderão ser orçadas separadamente.</p>
             </div>
-
-            <div class="side-info">
-              <small>Validade</small>
-              <strong id="pv-validade">7 dias</strong>
+          </div>
+          <div>
+            <div style="background:linear-gradient(135deg,#2b1d12,#7a4f2a);border-radius:20px;padding:28px 24px;text-align:center;margin-bottom:14px;box-shadow:0 16px 40px rgba(61,36,19,.20);">
+              <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#c49a5a;font-weight:800;margin-bottom:8px;">Investimento</div>
+              <div id="pv-valor" style="font-family:'DM Mono',monospace;font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:4px;">R$ 0,00</div>
+              <div id="pv-tipo" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:600;">Mensal</div>
+            </div>
+            <div style="background:#fff;border:1px solid #e4d3bd;border-radius:18px;overflow:hidden;">
+              <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0e8da;">
+                <div style="font-size:11px;color:#a99b8c;font-weight:800;text-transform:uppercase;letter-spacing:.8px;">Pagamento</div>
+                <div id="pv-pagamento" style="font-size:13px;font-weight:700;color:#2b1d12;">Pix</div>
+              </div>
+              <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0e8da;">
+                <div style="font-size:11px;color:#a99b8c;font-weight:800;text-transform:uppercase;letter-spacing:.8px;">Parcelamento</div>
+                <div id="pv-parcelamento" style="font-size:13px;font-weight:700;color:#2b1d12;">Até 3x</div>
+              </div>
+              <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:11px;color:#a99b8c;font-weight:800;text-transform:uppercase;letter-spacing:.8px;">Validade</div>
+                <div id="pv-validade" style="font-size:13px;font-weight:700;color:#2b1d12;">7 dias</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;background:#edf7f0;border:1px solid #b6dec7;border-radius:14px;padding:14px 16px;text-align:center;">
+              <div style="font-size:11px;color:#17613b;font-weight:800;letter-spacing:.5px;">✔ Para aceitar</div>
+              <div style="font-size:12px;color:#2d6b4a;margin-top:4px;line-height:1.5;">Responda confirmando a aprovação para alinhamos início e prazos.</div>
             </div>
           </div>
         </div>
-
-        <div style="margin-top:28px;padding:18px;border-radius:18px;background:#f5ede2;color:#4a3a2b">
-          <strong>Próximo passo:</strong> para avançar, confirme a aprovação da proposta para alinharmos início, prazos e envio das informações necessárias.
+        <div style="margin-top:36px;padding-top:22px;border-top:1px solid #e8ddd0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div style="font-size:12px;color:#a99b8c;">Gerado com <strong style="color:#7a4f2a;">Precifica+</strong> · proposta profissional para prestadores de serviço</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#c49a5a;"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:#7a4f2a;"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:#2b1d12;"></div>
+          </div>
         </div>
       </div>
+      <div style="height:4px;background:linear-gradient(90deg,#c49a5a,#7a4f2a,#2b1d12);"></div>
     </div>
   </section>
 
@@ -966,10 +996,11 @@ function renderEscopo(){
   `).join('');
 }
 function escopoClienteHTML(){
-  if(!escopo.length) return '<p style="color:#74675b">Nenhum item adicionado ainda.</p>';
-  return escopo.map(item => `
-    <div style="padding:12px 0;border-bottom:1px solid #e7d8c5;color:#4a3a2b">
-      • ${item.nome}
+  if(!escopo.length) return '<p style="color:#74675b;font-size:13px;">Nenhum item adicionado ainda.</p>';
+  return escopo.map((item, i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:8px;background:#fff;border:1px solid #e8ddd0;border-radius:12px;">
+      <div style="width:24px;height:24px;min-width:24px;border-radius:50%;background:linear-gradient(135deg,#2b1d12,#7a4f2a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">${i+1}</div>
+      <div style="font-size:13px;color:#3a2a1e;font-weight:600;flex:1;">${item.nome}</div>
     </div>
   `).join('');
 }
@@ -987,14 +1018,69 @@ function renderPreview(){
   document.getElementById('pv-pagamento').textContent = forma_pagamento.value;
   document.getElementById('pv-parcelamento').textContent = 'Até ' + parcelamento_max.value;
   document.getElementById('pv-validade').textContent = validade_proposta.value;
+  const dataEl = document.getElementById('pv-data');
+  if(dataEl) dataEl.textContent = new Date().toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric'});
 }
-function baixarPDF(){
+async function baixarPDF(){
   if(!escopo.length){
     alert('Adicione pelo menos uma entrega no escopo.');
     return;
   }
   renderPreview();
-  setTimeout(() => window.print(), 250);
+
+  const btn = document.querySelector('[onclick="baixarPDF()"]');
+  const originalText = btn ? btn.textContent : '';
+  if(btn){ btn.textContent = 'Gerando PDF...'; btn.disabled = true; }
+
+  await new Promise(r => setTimeout(r, 300));
+
+  const el = document.getElementById('preview-proposta');
+  const { jsPDF } = window.jspdf;
+
+  try {
+    const canvas = await html2canvas(el, {
+      scale: 2.5,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const ratio = canvas.height / canvas.width;
+    const imgW = pageW;
+    const imgH = imgW * ratio;
+
+    if(imgH <= pageH){
+      pdf.addImage(imgData, 'PNG', 0, 0, imgW, imgH);
+    } else {
+      // quebra em páginas se necessário
+      let yOffset = 0;
+      let remaining = imgH;
+      let page = 0;
+      while(remaining > 0){
+        if(page > 0) pdf.addPage();
+        const sliceH = Math.min(pageH, remaining);
+        pdf.addImage(imgData, 'PNG', 0, -page * pageH, imgW, imgH);
+        remaining -= sliceH;
+        yOffset += sliceH;
+        page++;
+      }
+    }
+
+    const cliente = document.getElementById('cliente_nome').value.trim() || 'proposta';
+    const titulo = document.getElementById('titulo_servico').value.trim() || 'servico';
+    const nomeArquivo = `proposta-${cliente}-${titulo}`.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'') + '.pdf';
+    pdf.save(nomeArquivo);
+  } catch(e) {
+    alert('Erro ao gerar PDF. Tente novamente.');
+    console.error(e);
+  } finally {
+    if(btn){ btn.textContent = originalText; btn.disabled = false; }
+  }
 }
 async function salvarHistorico(){
   if(!usuarioAtual || !sb){
