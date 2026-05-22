@@ -176,7 +176,7 @@
 
   .metric-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
@@ -211,11 +211,29 @@
   }
 
   .item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 36px;
     align-items: center;
     gap: 8px;
     padding: 9px 0;
     border-bottom: 1px solid var(--border);
+  }
+
+  .item-header {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 36px;
+    gap: 8px;
+    padding: 0 0 8px 0;
+    border-bottom: 2px solid var(--border-strong);
+    margin-bottom: 2px;
+  }
+
+  .item-header span {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--hint);
   }
 
   .item:last-child { border-bottom: none; }
@@ -231,6 +249,7 @@
     color: #4b2b86;
     border: 1px solid #d6c3ff;
     white-space: nowrap;
+    text-align: center;
   }
 
   .result-card {
@@ -258,9 +277,9 @@
     text-align: left;
   }
 
-  .ok { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
-  .warn { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
-  .bad { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
+  .ok   { background: var(--green-bg);  color: var(--green-text);  border-color: var(--green-border); }
+  .warn { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber-border); }
+  .bad  { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red-border); }
 
   .tip {
     font-size: 12px;
@@ -272,6 +291,40 @@
     line-height: 1.45;
   }
 
+  .vh-destaque {
+    background: linear-gradient(135deg, rgba(122,79,42,.08), rgba(196,154,90,.12));
+    border: 1px solid rgba(196,154,90,.4);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .vh-destaque .label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .vh-destaque .valor {
+    font-family: 'DM Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    letter-spacing: -1px;
+  }
+
+  .vh-destaque .sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
   .footer-note {
     text-align: center;
     color: var(--hint);
@@ -279,47 +332,50 @@
     margin-top: 10px;
   }
 
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 36px;
+    gap: 8px;
+    align-items: end;
+    margin-top: 14px;
+  }
+
+  .input-row label { margin-top: 0; }
+
   @media (max-width: 760px) {
     body { padding: 1rem; }
-    .grid, .steps, .metric-grid { grid-template-columns: 1fr; }
+    .grid, .steps { grid-template-columns: 1fr; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
     .result-card { position: static; }
+    .item, .item-header, .input-row {
+      grid-template-columns: 1fr 70px 70px 32px;
+    }
   }
 
-.support-btn{
-  position:fixed;
-  right:22px;
-  bottom:22px;
-  z-index:9999;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:13px 18px;
-  border-radius:999px;
-  background:linear-gradient(135deg,#17613b,#1f8f55);
-  color:#fff;
-  text-decoration:none;
-  font-family:'DM Sans',sans-serif;
-  font-size:14px;
-  font-weight:800;
-  box-shadow:0 16px 35px rgba(23,97,59,.25);
-}
-.support-btn:hover{transform:translateY(-1px)}
-@media(max-width:700px){
-  .support-btn{
-    right:14px;
-    bottom:14px;
-    padding:12px 15px;
-    font-size:13px;
+  .support-btn {
+    position: fixed;
+    right: 22px; bottom: 22px;
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #17613b, #1f8f55);
+    color: #fff;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 16px 35px rgba(23,97,59,.25);
   }
-}
-
+  .support-btn:hover { transform: translateY(-1px); }
 </style>
 
 <script>
-const SUPORTE_WHATSAPP = "5511999999999"; // troque pelo seu número com DDI + DDD
+const SUPORTE_WHATSAPP = "5511999999999";
 const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
 </script>
-
 </head>
 <body>
 <div class="container">
@@ -331,241 +387,192 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
 </header>
 
 <div class="steps">
-  <div class="step">1. Configure sua hora</div>
+  <div class="step">1. Calcule seu V/H</div>
   <div class="step">2. Monte o escopo</div>
   <div class="step">3. Veja quanto cobrar</div>
 </div>
 
 <div class="grid">
+
+  <!-- COLUNA ESQUERDA -->
   <div>
+
     <div class="card">
-      <p class="section-label">Configuração interna</p>
+      <p class="section-label">Passo 1 — Seu valor por hora</p>
 
-      <!-- MODO DE COBRANÇA -->
-      <label>Como você costuma cobrar?</label>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px">
-        <button type="button" class="modo-btn active" onclick="setModo('mensal')" id="modo-mensal"
-          style="padding:10px 6px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
-          Por mês
-        </button>
-        <button type="button" class="modo-btn" onclick="setModo('projeto')" id="modo-projeto"
-          style="padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
-          Por projeto
-        </button>
-        <button type="button" class="modo-btn" onclick="setModo('hora')" id="modo-hora"
-          style="padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
-          Por hora/aula
-        </button>
-      </div>
-      <div class="tip" id="modo-dica" style="margin-bottom:14px;margin-top:8px">
-        Social media, gestor de tráfego, assistente virtual — você atende clientes todo mês.
+      <div class="tip" style="margin-bottom:14px">
+        Coloque quanto você gasta por mês no total — moradia, alimentação, transporte, ferramentas, impostos. Depois informe quantas horas por mês você consegue trabalhar de verdade. Seu V/H sai automaticamente.
       </div>
 
-      <!-- CAMPOS COMUNS -->
-      <label>Custo de vida mensal (R$)</label>
-      <input type="number" id="custo_vida" value="2500" oninput="calcTudo()">
+      <label>Meus custos mensais totais (R$)</label>
+      <input type="number" id="custo_total" value="3000" oninput="calcTudo()" placeholder="Ex: 3000">
 
-      <label>Ferramentas, internet e assinaturas (R$)</label>
-      <input type="number" id="custo_tools" value="300" oninput="calcTudo()">
+      <label>Horas que trabalho por mês</label>
+      <input type="number" id="horas_mes" value="80" oninput="calcTudo()" placeholder="Ex: 80">
 
-      <label>Impostos / MEI / taxas (R$)</label>
-      <input type="number" id="custo_imposto" value="300" oninput="calcTudo()">
-
-      <label>Lucro desejado no mês (R$)</label>
-      <input type="number" id="lucro" value="1500" oninput="calcTudo()">
-
-      <!-- MODO MENSAL -->
-      <div id="campos-mensal">
-        <label>Quantos clientes você atende por mês?</label>
-        <input type="number" id="clientes_mes" value="4" oninput="calcTudo()">
-        <label>Horas dedicadas por cliente no mês</label>
-        <input type="number" id="horas_por_cliente" value="30" step="0.5" oninput="calcTudo()">
+      <div class="tip" style="margin-top:10px;margin-bottom:4px">
+        💡 Não conte só as horas "produtivas". Inclua reuniões, deslocamento, revisões, planejamento — tudo que você faz por causa do trabalho.
       </div>
 
-      <!-- MODO PROJETO -->
-      <div id="campos-projeto" style="display:none">
-        <label>Quantos projetos você quer fechar por mês?</label>
-        <input type="number" id="projetos_mes" value="2" oninput="calcTudo()">
-        <label>Horas médias por projeto</label>
-        <input type="number" id="horas_por_projeto" value="30" step="0.5" oninput="calcTudo()">
+      <div class="vh-destaque">
+        <div>
+          <div class="label">Seu V/H mínimo</div>
+          <div class="valor" id="vh-min">R$ 0,00</div>
+          <div class="sub" id="vh-min-sub">—</div>
+        </div>
+        <div style="text-align:right">
+          <div class="label">Com margem 20%</div>
+          <div class="valor" id="vh-rec">R$ 0,00</div>
+          <div class="sub">recomendado</div>
+        </div>
       </div>
 
-      <!-- MODO HORA/AULA -->
-      <div id="campos-hora" style="display:none">
-        <label>Quantas horas ou aulas você dá por mês?</label>
-        <input type="number" id="horas_aula_mes" value="60" oninput="calcTudo()">
-      </div>
-
-      <label>Margem de segurança (%)</label>
-      <input type="number" id="margem" value="20" oninput="calcTudo()">
-
-      <div class="tip" style="margin-top:14px">
-        Esses dados são internos. Eles servem para calcular seu preço com mais segurança, não para mostrar ao cliente.
-      </div>
-    </div>
-
-    <div class="metric-grid" style="margin-bottom:1rem">
-      <div class="metric">
-        <div class="metric-label">Custo + lucro</div>
-        <div class="metric-value" id="r-custo">R$ 0</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Hora mínima</div>
-        <div class="metric-value" id="r-hora-min">R$ 0</div>
-        <div class="metric-sub">piso seguro</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Hora recomendada</div>
-        <div class="metric-value" id="r-hora-rec">R$ 0</div>
-        <div class="metric-sub">use no cálculo</div>
+      <label style="margin-top:16px">V/H que vou usar no cálculo (R$)</label>
+      <input type="number" id="vh_usado" oninput="calcTudo()" placeholder="Confirme ou ajuste">
+      <div class="tip" style="margin-top:8px">
+        Use o V/H mínimo ou o recomendado acima — ou ajuste se souber quanto o mercado paga na sua área.
       </div>
     </div>
 
     <div class="card">
-      <p class="section-label">Montar escopo</p>
+      <p class="section-label">Passo 2 — Monte o escopo</p>
 
-      <label>Nome da demanda</label>
-      <input type="text" id="demanda_nome" placeholder="Ex: Gestão de Instagram mensal">
-
-      <label>Horas estimadas</label>
-      <div style="display:flex;gap:8px">
-        <input type="number" id="demanda_horas" placeholder="Horas" step="0.5">
-        <button type="button" class="btn btn-primary" style="min-width:120px" onclick="addDemanda()">Adicionar</button>
+      <div class="tip" style="margin-bottom:14px">
+        Liste tudo que você vai entregar: cada tipo de peça, reunião, planejamento, revisão. Não esqueça nada — é o tempo invisível que come seu lucro.
       </div>
 
-      <div class="tip" style="margin-top:14px">
-        Coloque tudo que consome tempo: produção, reunião, ajustes, atendimento, planejamento, deslocamento e revisão.
+      <!-- cabeçalho -->
+      <div class="item-header">
+        <span>Demanda</span>
+        <span style="text-align:center">Qtd</span>
+        <span style="text-align:center">H/und</span>
+        <span></span>
       </div>
-    </div>
 
-    <div class="card" id="escopo-card" style="display:none">
-      <p class="section-label">Escopo calculado</p>
       <div id="lista-escopo"></div>
+
+      <!-- linha de input -->
+      <div class="input-row">
+        <div>
+          <label>Nome da demanda</label>
+          <input type="text" id="d_nome" placeholder="Ex: Reels">
+        </div>
+        <div>
+          <label>Qtd</label>
+          <input type="number" id="d_qtd" placeholder="4" min="0" step="1">
+        </div>
+        <div>
+          <label>H/und</label>
+          <input type="number" id="d_horas" placeholder="0,5" min="0" step="0.1">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="addDemanda()" title="Adicionar">+</button>
+        </div>
+      </div>
     </div>
+
   </div>
 
+  <!-- COLUNA DIREITA -->
   <div>
     <div class="card result-card">
-      <p class="section-label">Resultado da precificação</p>
+      <p class="section-label">Resultado</p>
 
-      <div class="metric-label">Total estimado de horas</div>
-      <div class="metric-value" id="total-horas" style="font-size:30px;margin-bottom:18px">0h</div>
+      <div class="metric-grid" style="margin-bottom:16px">
+        <div class="metric">
+          <div class="metric-label">Total de horas</div>
+          <div class="metric-value" id="r-horas">0,0h</div>
+          <div class="metric-sub">no escopo</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">V/H usado</div>
+          <div class="metric-value" id="r-vh">R$ —</div>
+          <div class="metric-sub">por hora</div>
+        </div>
+      </div>
 
-      <div class="metric-label">Você deveria cobrar</div>
+      <div class="metric-label">Você deve cobrar</div>
       <div class="big-value" id="valor-final">R$ 0,00</div>
+      <div class="metric-sub" id="formula-final" style="margin-bottom:16px">Configure os passos ao lado</div>
 
-      <div class="metric-sub" id="formula-final">Configure sua hora e adicione demandas</div>
-
-      <div style="margin-top:16px" id="alerta-final"></div>
+      <div id="alerta-final"></div>
     </div>
 
-    <div class="card">
-      <p class="section-label">Simular valor de mercado</p>
-      <label>Quero cobrar (R$)</label>
-      <input type="number" id="valor_custom" placeholder="Ex: 1500" oninput="simularValor()">
-      <div style="margin-top:10px" id="alerta-custom"></div>
+    <div class="card" id="breakdown-card" style="display:none">
+      <p class="section-label">Detalhamento do escopo</p>
+      <div class="item-header">
+        <span>Demanda</span>
+        <span style="text-align:center">Horas</span>
+        <span style="text-align:center">Valor</span>
+        <span></span>
+      </div>
+      <div id="lista-breakdown"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:2px solid var(--border-strong);margin-top:4px">
+        <span style="font-size:13px;font-weight:700">Total</span>
+        <span style="font-family:'DM Mono';font-weight:700;font-size:15px" id="breakdown-total-h">0h</span>
+        <span style="font-family:'DM Mono';font-weight:700;font-size:15px;color:var(--accent-dark)" id="breakdown-total-v">R$ 0,00</span>
+        <span></span>
+      </div>
     </div>
 
     <div class="card">
       <p class="section-label">Leitura estratégica</p>
-      <div class="tip">
+      <div class="tip" style="margin-bottom:10px">
         A beta não gera proposta, não salva clientes e não baixa PDF. Ela serve para dar clareza rápida sobre quanto cobrar e evitar prejuízo.
       </div>
+      <div id="leitura-projetos"></div>
     </div>
   </div>
+
 </div>
 
 <div class="footer-note">Precifica+ Beta — ferramenta local, sem armazenamento de dados.</div>
-
 </div>
 
 <script>
-let horaMin = 0;
-let horaRec = 0;
 let escopo = [];
-let modoAtual = 'mensal';
+let vhMin = 0;
+let vhRec = 0;
 
 function fmt(v) {
   return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
-
 function fmtH(v) {
   return Number(v || 0).toFixed(1).replace('.', ',') + 'h';
 }
 
-function setModo(modo) {
-  modoAtual = modo;
+function calcVH() {
+  const custos = +document.getElementById('custo_total').value || 0;
+  const horas  = +document.getElementById('horas_mes').value || 1;
 
-  // Atualiza botões
-  document.querySelectorAll('.modo-btn').forEach(btn => {
-    btn.style.background = 'var(--surface)';
-    btn.style.color = 'var(--muted)';
-    btn.style.borderColor = 'var(--border)';
-  });
-  const ativo = document.getElementById('modo-' + modo);
-  ativo.style.background = 'linear-gradient(135deg,var(--accent-dark),var(--accent))';
-  ativo.style.color = '#fff';
-  ativo.style.borderColor = 'var(--accent)';
+  vhMin = custos / horas;
+  vhRec = vhMin * 1.2;
 
-  // Mostra/oculta campos
-  document.getElementById('campos-mensal').style.display = modo === 'mensal' ? 'block' : 'none';
-  document.getElementById('campos-projeto').style.display = modo === 'projeto' ? 'block' : 'none';
-  document.getElementById('campos-hora').style.display = modo === 'hora' ? 'block' : 'none';
+  document.getElementById('vh-min').textContent     = fmt(vhMin);
+  document.getElementById('vh-min-sub').textContent = `${fmt(custos)} ÷ ${horas}h`;
+  document.getElementById('vh-rec').textContent     = fmt(vhRec);
 
-  // Atualiza dica
-  const dicas = {
-    mensal: 'Social media, gestor de tráfego, assistente virtual — você atende clientes todo mês.',
-    projeto: 'Fotógrafo, designer, editor de vídeo, dev — você entrega um projeto por vez.',
-    hora: 'Professor, consultor, coach, mentor — você cobra por hora ou aula.'
-  };
-  document.getElementById('modo-dica').textContent = dicas[modo];
-
-  calcTudo();
-}
-
-function getHorasMes() {
-  if (modoAtual === 'mensal') {
-    const clientes = +document.getElementById('clientes_mes').value || 1;
-    const hPorCliente = +document.getElementById('horas_por_cliente').value || 1;
-    return clientes * hPorCliente;
-  } else if (modoAtual === 'projeto') {
-    const projetos = +document.getElementById('projetos_mes').value || 1;
-    const hPorProjeto = +document.getElementById('horas_por_projeto').value || 1;
-    return projetos * hPorProjeto;
-  } else {
-    return +document.getElementById('horas_aula_mes').value || 1;
-  }
-}
-
-function calcHora() {
-  const vida = +document.getElementById('custo_vida').value || 0;
-  const tools = +document.getElementById('custo_tools').value || 0;
-  const imp = +document.getElementById('custo_imposto').value || 0;
-  const lucro = +document.getElementById('lucro').value || 0;
-  const margem = +document.getElementById('margem').value || 0;
-  const horas = getHorasMes();
-
-  const total = vida + tools + imp + lucro;
-  horaMin = total / horas;
-  horaRec = horaMin * (1 + margem / 100);
-
-  document.getElementById('r-custo').textContent = fmt(total);
-  document.getElementById('r-hora-min').textContent = fmt(horaMin);
-  document.getElementById('r-hora-rec').textContent = fmt(horaRec);
+  // Preenche o campo V/H usado só se estiver vazio
+  const campo = document.getElementById('vh_usado');
+  if (!campo.value) campo.value = vhRec.toFixed(2);
 }
 
 function addDemanda() {
-  const nome = document.getElementById('demanda_nome').value.trim();
-  const horas = +document.getElementById('demanda_horas').value;
+  const nome  = document.getElementById('d_nome').value.trim();
+  const qtd   = +document.getElementById('d_qtd').value;
+  const horas = +document.getElementById('d_horas').value;
 
-  if (!nome || !horas) {
-    alert('Preencha o nome da demanda e a quantidade de horas.');
+  if (!nome || !qtd || !horas) {
+    alert('Preencha nome, quantidade e horas por unidade.');
     return;
   }
 
-  escopo.push({ nome, horas });
-  document.getElementById('demanda_nome').value = '';
-  document.getElementById('demanda_horas').value = '';
+  escopo.push({ nome, qtd, horas });
+  document.getElementById('d_nome').value  = '';
+  document.getElementById('d_qtd').value   = '';
+  document.getElementById('d_horas').value = '';
+  document.getElementById('d_nome').focus();
 
   renderEscopo();
   calcTudo();
@@ -578,98 +585,110 @@ function removeDemanda(i) {
 }
 
 function renderEscopo() {
-  const card = document.getElementById('escopo-card');
   const lista = document.getElementById('lista-escopo');
+  if (!escopo.length) { lista.innerHTML = ''; return; }
 
-  if (!escopo.length) {
-    card.style.display = 'none';
-    lista.innerHTML = '';
-    return;
-  }
-
-  card.style.display = 'block';
   lista.innerHTML = escopo.map((item, i) => `
     <div class="item">
-      <span style="flex:1;font-size:14px">${item.nome}</span>
-      <span class="badge">${fmtH(item.horas)}</span>
-      <button class="btn" style="padding:6px 10px" onclick="removeDemanda(${i})">×</button>
+      <span style="font-size:14px">${item.nome}</span>
+      <span class="badge" style="text-align:center">${item.qtd}×</span>
+      <span class="badge" style="text-align:center">${fmtH(item.horas)}</span>
+      <button class="btn" style="padding:4px 8px;font-size:13px" onclick="removeDemanda(${i})">×</button>
     </div>
   `).join('');
 }
 
 function totalHoras() {
-  return escopo.reduce((s, item) => s + item.horas, 0);
+  return escopo.reduce((s, item) => s + item.qtd * item.horas, 0);
 }
 
 function calcTudo() {
-  calcHora();
+  calcVH();
 
-  const h = totalHoras();
-  const valor = h * horaRec;
+  const vh   = +document.getElementById('vh_usado').value || 0;
+  const h    = totalHoras();
+  const valor = h * vh;
 
-  document.getElementById('total-horas').textContent = fmtH(h);
+  document.getElementById('r-horas').textContent = fmtH(h);
+  document.getElementById('r-vh').textContent    = vh ? fmt(vh) : 'R$ —';
   document.getElementById('valor-final').textContent = fmt(valor);
 
-  if (!h) {
-    document.getElementById('formula-final').textContent = 'Adicione pelo menos uma demanda';
+  // breakdown
+  const bcard = document.getElementById('breakdown-card');
+  const blista = document.getElementById('lista-breakdown');
+
+  if (!escopo.length || !vh) {
+    bcard.style.display = 'none';
+    document.getElementById('formula-final').textContent = !h ? 'Adicione demandas ao escopo' : 'Informe o V/H para ver o resultado';
     document.getElementById('alerta-final').innerHTML = '';
     return;
   }
 
-  document.getElementById('formula-final').textContent = `${fmtH(h)} × ${fmt(horaRec)}/h`;
+  document.getElementById('formula-final').textContent = `${fmtH(h)} × ${fmt(vh)}/h`;
 
-  document.getElementById('alerta-final').innerHTML = `
-    <div class="alerta ok">
-      Valor recomendado calculado com base nos seus custos, lucro desejado e margem de segurança.
-    </div>
-  `;
+  bcard.style.display = 'block';
+  blista.innerHTML = escopo.map(item => {
+    const hItem = item.qtd * item.horas;
+    const vItem = hItem * vh;
+    return `
+      <div class="item">
+        <span style="font-size:13px">${item.nome} <span style="color:var(--hint)">${item.qtd}× ${fmtH(item.horas)}</span></span>
+        <span style="font-family:'DM Mono';font-size:13px;text-align:center">${fmtH(hItem)}</span>
+        <span style="font-family:'DM Mono';font-size:13px;text-align:center">${fmt(vItem)}</span>
+        <span></span>
+      </div>
+    `;
+  }).join('');
 
-  simularValor();
-}
+  document.getElementById('breakdown-total-h').textContent = fmtH(h);
+  document.getElementById('breakdown-total-v').textContent = fmt(valor);
 
-function simularValor() {
-  const valor = +document.getElementById('valor_custom').value || 0;
-  const h = totalHoras();
-  const el = document.getElementById('alerta-custom');
-
-  if (!valor || !h) {
-    el.innerHTML = '';
-    return;
-  }
-
-  const horaCalculada = valor / h;
-
-  if (horaCalculada >= horaRec) {
-    el.innerHTML = `<div class="alerta ok">Bom negócio. Esse valor equivale a ${fmt(horaCalculada)}/h, acima da sua hora recomendada.</div>`;
-  } else if (horaCalculada >= horaMin) {
-    el.innerHTML = `<div class="alerta warn">Atenção. Esse valor equivale a ${fmt(horaCalculada)}/h. Não dá prejuízo, mas está abaixo do ideal.</div>`;
+  // alerta
+  let alertaHtml = '';
+  if (vh < vhMin) {
+    alertaHtml = `<div class="alerta bad">⚠️ Seu V/H está abaixo do mínimo (${fmt(vhMin)}/h). Você vai trabalhar no prejuízo.</div>`;
+  } else if (vh < vhRec) {
+    alertaHtml = `<div class="alerta warn">Atenção: V/H abaixo do recomendado (${fmt(vhRec)}/h). Funciona, mas sem margem de segurança.</div>`;
   } else {
-    el.innerHTML = `<div class="alerta bad">Prejuízo provável. Esse valor equivale a ${fmt(horaCalculada)}/h, abaixo da sua hora mínima.</div>`;
+    alertaHtml = `<div class="alerta ok">Tudo certo. Seu V/H cobre seus custos e ainda tem margem de segurança.</div>`;
+  }
+  document.getElementById('alerta-final').innerHTML = alertaHtml;
+
+  // leitura estratégica
+  const custos = +document.getElementById('custo_total').value || 0;
+  const el = document.getElementById('leitura-projetos');
+  if (valor > 0 && custos > 0) {
+    const projetosNecessarios = custos / valor;
+    const inteiros = Math.ceil(projetosNecessarios);
+    const sobra = (inteiros * valor) - custos;
+    el.innerHTML = `
+      <div class="alerta ok" style="margin-bottom:0">
+        <strong>Para bater seus custos mensais de ${fmt(custos)}:</strong><br>
+        Você precisa fechar <strong>${inteiros} ${inteiros === 1 ? 'projeto igual' : 'projetos iguais'} a esse</strong> por mês
+        — cada um a ${fmt(valor)}.<br>
+        ${inteiros > 1 ? `Sobrando <strong>${fmt(sobra)}</strong> de margem.` : `Com <strong>${fmt(sobra)}</strong> sobrando.`}
+      </div>
+    `;
+  } else {
+    el.innerHTML = '';
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('demanda_nome').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
-  });
-  document.getElementById('demanda_horas').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
+  ['d_nome','d_qtd','d_horas'].forEach(id => {
+    document.getElementById(id).addEventListener('keypress', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
+    });
   });
   calcTudo();
 });
 </script>
 
-
-<a class="support-btn" id="support-whatsapp" target="_blank" rel="noopener">
-  💬 Suporte
-</a>
-
+<a class="support-btn" id="support-whatsapp" target="_blank" rel="noopener">💬 Suporte</a>
 <script>
 (function(){
   const btn = document.getElementById('support-whatsapp');
-  if(btn){
-    btn.href = "https://wa.me/" + SUPORTE_WHATSAPP + "?text=" + encodeURIComponent(SUPORTE_TEXTO);
-  }
+  if (btn) btn.href = "https://wa.me/" + SUPORTE_WHATSAPP + "?text=" + encodeURIComponent(SUPORTE_TEXTO);
 })();
 </script>
 
