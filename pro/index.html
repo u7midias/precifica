@@ -496,63 +496,19 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ PRO.";
           <div class="num">1</div>
           <div class="section-label">Minha base interna</div>
         </div>
-        <p class="helper">Preencha seus custos e metas. Essa parte serve só para calcular sua hora recomendada.</p>
+        <p class="helper">Preencha seus custos totais mensais e quantas horas você realmente trabalha por mês. Seu V/H sai automaticamente — e é esse número que vai calcular o valor de cada proposta.</p>
 
-        <label>Custo de vida mensal (R$)</label>
-        <input type="number" id="custo_vida" value="2500" oninput="calcTudo()">
+        <label>Meus custos mensais totais (R$)</label>
+        <input type="number" id="custo_total" value="3000" oninput="calcTudo()">
+        <p class="helper" style="margin-top:6px">Some tudo: moradia, alimentação, transporte, ferramentas, internet, impostos, MEI. O que você precisa que entre todo mês.</p>
 
-        <label>Ferramentas, internet e assinaturas (R$)</label>
-        <input type="number" id="custo_tools" value="300" oninput="calcTudo()">
-
-        <label>Impostos / MEI / taxas (R$)</label>
-        <input type="number" id="custo_imposto" value="300" oninput="calcTudo()">
-
-        <label>Lucro desejado no mês (R$)</label>
-        <input type="number" id="lucro" value="1500" oninput="calcTudo()">
-
-        <label>Como você costuma cobrar?</label>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px">
-          <button type="button" class="modo-btn" onclick="setModo('mensal')" id="modo-mensal"
-            style="padding:10px 6px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
-            Por mês
-          </button>
-          <button type="button" class="modo-btn" onclick="setModo('projeto')" id="modo-projeto"
-            style="padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
-            Por projeto
-          </button>
-          <button type="button" class="modo-btn" onclick="setModo('hora')" id="modo-hora"
-            style="padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Sans';font-size:12px;font-weight:700;cursor:pointer;transition:.15s;">
-            Por hora/aula
-          </button>
-        </div>
-        <div class="helper" id="modo-dica" style="margin-bottom:14px;margin-top:8px">
-          Social media, gestor de tráfego, assistente virtual — você atende clientes todo mês.
-        </div>
-
-        <!-- MODO MENSAL -->
-        <div id="campos-mensal">
-          <label>Quantos clientes você atende por mês?</label>
-          <input type="number" id="clientes_mes" value="4" oninput="calcTudo()">
-          <label>Horas dedicadas por cliente no mês</label>
-          <input type="number" id="horas_por_cliente" value="30" step="0.5" oninput="calcTudo()">
-        </div>
-
-        <!-- MODO PROJETO -->
-        <div id="campos-projeto" style="display:none">
-          <label>Quantos projetos você quer fechar por mês?</label>
-          <input type="number" id="projetos_mes" value="2" oninput="calcTudo()">
-          <label>Horas médias por projeto</label>
-          <input type="number" id="horas_por_projeto" value="30" step="0.5" oninput="calcTudo()">
-        </div>
-
-        <!-- MODO HORA/AULA -->
-        <div id="campos-hora" style="display:none">
-          <label>Quantas horas ou aulas você dá por mês?</label>
-          <input type="number" id="horas_aula_mes" value="60" oninput="calcTudo()">
-        </div>
+        <label>Horas que trabalho por mês</label>
+        <input type="number" id="horas_mes" value="80" oninput="calcTudo()">
+        <p class="helper" style="margin-top:6px">Não conte só as horas "produtivas". Inclua reuniões, deslocamento, revisões, planejamento — tudo que você faz por causa do trabalho. Na prática, a maioria fatura entre 80 e 120h/mês.</p>
 
         <label>Margem de segurança (%)</label>
         <input type="number" id="margem" value="20" oninput="calcTudo()">
+        <p class="helper" style="margin-top:6px">Reserva para imprevistos, férias e meses fracos. 20% é um bom ponto de partida.</p>
       </div>
 
       <div>
@@ -563,15 +519,15 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ PRO.";
           </div>
           <div class="metrics">
             <div class="metric">
-              <div class="metric-label">Custo + lucro</div>
+              <div class="metric-label">Custos totais</div>
               <div class="metric-value" id="r-custo">R$ 0</div>
             </div>
             <div class="metric">
-              <div class="metric-label">Hora mínima</div>
+              <div class="metric-label">V/H mínimo</div>
               <div class="metric-value" id="r-hora-min">R$ 0</div>
             </div>
             <div class="metric">
-              <div class="metric-label">Hora recomendada</div>
+              <div class="metric-label">V/H recomendado</div>
               <div class="metric-value" id="r-hora-rec">R$ 0</div>
             </div>
           </div>
@@ -615,15 +571,25 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ PRO.";
             <div class="num">3</div>
             <div class="section-label">Escopo do cliente</div>
           </div>
-          <p class="helper">Aqui você monta o escopo total. As horas são usadas só para calcular o valor recomendado e não aparecem na proposta final.</p>
+          <p class="helper">Liste tudo que você vai entregar: cada tipo de peça, reunião, planejamento, revisão. Não esqueça nada — é o tempo invisível que come seu lucro.</p>
 
-          <label>Entrega / demanda</label>
-          <input type="text" id="demanda_nome" placeholder="Ex: Planejamento mensal de conteúdo">
-
-          <label>Horas internas estimadas</label>
-          <div style="display:flex;gap:8px">
-            <input type="number" id="demanda_horas" placeholder="Horas" step="0.5">
-            <button type="button" class="btn btn-primary" onclick="addDemanda()">Adicionar</button>
+          <div style="display:grid;grid-template-columns:1fr 90px 90px auto;gap:8px;align-items:end;margin-top:14px">
+            <div>
+              <label style="margin-top:0">Entrega / demanda</label>
+              <input type="text" id="demanda_nome" placeholder="Ex: Reels">
+            </div>
+            <div>
+              <label style="margin-top:0">Qtd</label>
+              <input type="number" id="demanda_qtd" placeholder="4" min="0" step="1">
+            </div>
+            <div>
+              <label style="margin-top:0">H/und</label>
+              <input type="number" id="demanda_horas" placeholder="0,5" min="0" step="0.1">
+            </div>
+            <div>
+              <label style="margin-top:0">&nbsp;</label>
+              <button type="button" class="btn btn-primary" onclick="addDemanda()">+</button>
+            </div>
           </div>
         </div>
 
@@ -803,7 +769,6 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ PRO.";
 let horaMin = 0;
 let horaRec = 0;
 let escopo = [];
-let modoAtual = 'mensal';
 let sb = null;
 let usuarioAtual = null;
 let historicoCache = [];
@@ -940,76 +905,28 @@ function irPara(id){
   if(tab) showTab(id, tab);
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
-function setModo(modo){
-  modoAtual = modo;
 
-  document.querySelectorAll('.modo-btn').forEach(btn => {
-    btn.style.background = 'var(--surface)';
-    btn.style.color = 'var(--muted)';
-    btn.style.borderColor = 'var(--border)';
-  });
-  const ativo = document.getElementById('modo-' + modo);
-  if(ativo){
-    ativo.style.background = 'linear-gradient(135deg,var(--accent-dark),var(--accent))';
-    ativo.style.color = '#fff';
-    ativo.style.borderColor = 'var(--accent)';
-  }
-
-  document.getElementById('campos-mensal').style.display = modo === 'mensal' ? 'block' : 'none';
-  document.getElementById('campos-projeto').style.display = modo === 'projeto' ? 'block' : 'none';
-  document.getElementById('campos-hora').style.display = modo === 'hora' ? 'block' : 'none';
-
-  const dicas = {
-    mensal: 'Social media, gestor de tráfego, assistente virtual — você atende clientes todo mês.',
-    projeto: 'Fotógrafo, designer, editor de vídeo, dev — você entrega um projeto por vez.',
-    hora: 'Professor, consultor, coach, mentor — você cobra por hora ou aula.'
-  };
-  const dicaEl = document.getElementById('modo-dica');
-  if(dicaEl) dicaEl.textContent = dicas[modo];
-
-  calcTudo();
+function totalHoras(){
+  return escopo.reduce((s, item) => s + (Number(item.qtd) || 0) * (Number(item.horas) || 0), 0);
 }
-
-function getHorasMes(){
-  if(modoAtual === 'mensal'){
-    const clientes = Number(document.getElementById('clientes_mes')?.value) || 1;
-    const hPorCliente = Number(document.getElementById('horas_por_cliente')?.value) || 1;
-    return clientes * hPorCliente;
-  } else if(modoAtual === 'projeto'){
-    const projetos = Number(document.getElementById('projetos_mes')?.value) || 1;
-    const hPorProjeto = Number(document.getElementById('horas_por_projeto')?.value) || 1;
-    return projetos * hPorProjeto;
-  } else {
-    return Number(document.getElementById('horas_aula_mes')?.value) || 1;
-  }
+function valorRecomendado(){
+  return totalHoras() * (Number(horaRec) || 0);
 }
-
 function calcHora(){
-  const total =
-    (Number(document.getElementById('custo_vida')?.value) || 0) +
-    (Number(document.getElementById('custo_tools')?.value) || 0) +
-    (Number(document.getElementById('custo_imposto')?.value) || 0) +
-    (Number(document.getElementById('lucro')?.value) || 0);
-
-  const horas = getHorasMes();
+  const total  = Number(document.getElementById('custo_total')?.value) || 0;
+  const horas  = Number(document.getElementById('horas_mes')?.value) || 1;
   const margem = Number(document.getElementById('margem')?.value) || 0;
 
   horaMin = total / horas;
   horaRec = horaMin * (1 + margem / 100);
 
   const custoEl = document.getElementById('r-custo');
-  const minEl = document.getElementById('r-hora-min');
-  const recEl = document.getElementById('r-hora-rec');
+  const minEl   = document.getElementById('r-hora-min');
+  const recEl   = document.getElementById('r-hora-rec');
 
   if(custoEl) custoEl.textContent = fmt(total);
-  if(minEl) minEl.textContent = fmt(horaMin);
-  if(recEl) recEl.textContent = fmt(horaRec);
-}
-function totalHoras(){
-  return escopo.reduce((s, item) => s + (Number(item.horas) || 0), 0);
-}
-function valorRecomendado(){
-  return totalHoras() * (Number(horaRec) || 0);
+  if(minEl)   minEl.textContent   = fmt(horaMin);
+  if(recEl)   recEl.textContent   = fmt(horaRec);
 }
 function calcTudo(){
   calcHora();
@@ -1026,28 +943,32 @@ function calcTudo(){
 
   if(alertaEl){
     alertaEl.innerHTML = h
-      ? '<div class="alerta ok">Esse valor é calculado com base na sua hora recomendada e nas horas internas do escopo.</div>'
+      ? '<div class="alerta ok">Valor calculado com base no seu V/H recomendado e nas horas do escopo.</div>'
       : '<div class="alerta warn">Adicione entregas ao escopo para calcular o valor recomendado.</div>';
   }
 
   renderPreview();
 }
 function addDemanda(){
-  const nomeEl = document.getElementById('demanda_nome');
+  const nomeEl  = document.getElementById('demanda_nome');
+  const qtdEl   = document.getElementById('demanda_qtd');
   const horasEl = document.getElementById('demanda_horas');
 
-  const nome = nomeEl ? nomeEl.value.trim() : '';
+  const nome  = nomeEl  ? nomeEl.value.trim() : '';
+  const qtd   = qtdEl   ? Number(qtdEl.value.replace(',', '.'))   : 0;
   const horas = horasEl ? Number(horasEl.value.replace(',', '.')) : 0;
 
-  if(!nome || !horas || horas <= 0){
-    alert('Preencha a entrega e as horas internas estimadas.');
+  if(!nome || !qtd || !horas || qtd <= 0 || horas <= 0){
+    alert('Preencha a entrega, a quantidade e as horas por unidade.');
     return;
   }
 
-  escopo.push({ nome, horas });
+  escopo.push({ nome, qtd, horas });
 
-  nomeEl.value = '';
+  nomeEl.value  = '';
+  qtdEl.value   = '';
   horasEl.value = '';
+  nomeEl.focus();
 
   renderEscopo();
   calcTudo();
@@ -1073,7 +994,9 @@ function renderEscopo(){
   lista.innerHTML = escopo.map((item, i) => `
     <div class="item">
       <div class="item-name">${item.nome}</div>
-      <span class="badge">${fmtH(item.horas)}</span>
+      <span class="badge">${item.qtd}×</span>
+      <span class="badge">${fmtH(item.horas)}/und</span>
+      <span class="badge" style="background:#edf7f0;color:#17613b;border-color:#b6dec7">${fmtH(item.qtd * item.horas)}</span>
       <button class="btn" style="padding:7px 10px" onclick="removeDemanda(${i})">×</button>
     </div>
   `).join('');
@@ -1083,7 +1006,7 @@ function escopoClienteHTML(){
   return escopo.map((item, i) => `
     <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:8px;background:#fff;border:1px solid #e8ddd0;border-radius:12px;">
       <div style="width:24px;height:24px;min-width:24px;border-radius:50%;background:linear-gradient(135deg,#2b1d12,#7a4f2a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">${i+1}</div>
-      <div style="font-size:13px;color:#3a2a1e;font-weight:600;flex:1;">${item.nome}</div>
+      <div style="font-size:13px;color:#3a2a1e;font-weight:600;flex:1;">${item.nome}${item.qtd > 1 ? ' <span style="color:#a99b8c;font-weight:400">('+item.qtd+'×)</span>' : ''}</div>
     </div>
   `).join('');
 }
@@ -1208,7 +1131,7 @@ async function salvarHistorico(){
     user_id: usuarioAtual.id,
     proposta_id: data.id,
     nome: item.nome,
-    horas: item.horas
+    horas: (Number(item.qtd) || 1) * (Number(item.horas) || 0)
   }));
 
   const itensResult = await sb.from('itens_proposta').insert(itens);
@@ -1243,6 +1166,7 @@ function carregarPropostaDoHistorico(id){
 
   escopo = (p.itens_proposta || []).map(item => ({
     nome: item.nome,
+    qtd: 1,
     horas: Number(item.horas) || 0
   }));
 
