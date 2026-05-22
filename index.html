@@ -187,9 +187,9 @@ flex:1;
       </div>
       <div class="mockup">
         <div class="mockup-top"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-        <div class="mockup-card"><div class="mockup-label">Hora recomendada</div><div class="mockup-value">R$ 87,00</div></div>
+        <div class="mockup-card"><div class="mockup-label">V/H recomendado</div><div class="mockup-value">R$ 87,00</div></div>
         <div class="mockup-card"><div class="mockup-label">Projeto calculado</div><div class="mockup-value">R$ 2.610</div></div>
-        <div class="mockup-status">Resultado baseado em custos, lucro desejado, horas disponíveis e margem de segurança.</div>
+        <div class="mockup-status">Resultado baseado nos seus custos reais, horas disponíveis e escopo montado demanda por demanda.</div>
       </div>
     </div>
   </div>
@@ -220,35 +220,40 @@ flex:1;
         <div>
           <div class="panel">
             <p class="panel-title">Configuração interna</p>
-            <label>Custo de vida mensal (R$)</label>
-            <input type="number" id="custo_vida" value="2500" oninput="calcTudo()">
-            <label>Ferramentas, internet e assinaturas (R$)</label>
-            <input type="number" id="custo_tools" value="300" oninput="calcTudo()">
-            <label>Impostos / MEI / taxas (R$)</label>
-            <input type="number" id="custo_imposto" value="300" oninput="calcTudo()">
-            <label>Lucro desejado no mês (R$)</label>
-            <input type="number" id="lucro" value="1500" oninput="calcTudo()">
-            <label>Horas disponíveis para vender no mês</label>
-            <input type="number" id="horas_mes" value="120" oninput="calcTudo()">
+            <label>Meus custos mensais totais (R$)</label>
+            <input type="number" id="custo_total" value="3000" oninput="calcTudo()">
+            <label>Horas que trabalho por mês</label>
+            <input type="number" id="horas_mes" value="80" oninput="calcTudo()">
             <label>Margem de segurança (%)</label>
             <input type="number" id="margem" value="20" oninput="calcTudo()">
-            <div class="tip">Esses dados são internos. Eles servem para calcular seu preço com segurança e não precisam aparecer para o cliente.</div>
+            <div class="tip">Some tudo nos custos: moradia, alimentação, transporte, ferramentas, impostos. Nas horas, conte reuniões, deslocamento, revisões — tudo que você faz por causa do trabalho.</div>
           </div>
 
           <div class="metrics">
-            <div class="metric"><div class="metric-label">Custo + lucro</div><div class="metric-value" id="r-custo">R$ 0</div></div>
-            <div class="metric"><div class="metric-label">Hora mínima</div><div class="metric-value" id="r-hora-min">R$ 0</div><div class="metric-sub">piso seguro</div></div>
-            <div class="metric"><div class="metric-label">Hora recomendada</div><div class="metric-value" id="r-hora-rec">R$ 0</div><div class="metric-sub">use no cálculo</div></div>
+            <div class="metric"><div class="metric-label">Custos totais</div><div class="metric-value" id="r-custo">R$ 0</div></div>
+            <div class="metric"><div class="metric-label">V/H mínimo</div><div class="metric-value" id="r-hora-min">R$ 0</div><div class="metric-sub">piso seguro</div></div>
+            <div class="metric"><div class="metric-label">V/H recomendado</div><div class="metric-value" id="r-hora-rec">R$ 0</div><div class="metric-sub">use no cálculo</div></div>
           </div>
 
           <div class="panel">
             <p class="panel-title">Montar escopo</p>
-            <label>Nome da demanda</label>
-            <input type="text" id="demanda_nome" placeholder="Ex: Gestão de Instagram mensal">
-            <label>Horas estimadas</label>
-            <div class="row">
-              <input type="number" id="demanda_horas" placeholder="Horas" step="0.5">
-              <button type="button" class="btn btn-primary" onclick="addDemanda()">Adicionar</button>
+            <div style="display:grid;grid-template-columns:1fr 72px 72px auto;gap:8px;align-items:end">
+              <div>
+                <label style="margin-top:0">Demanda</label>
+                <input type="text" id="demanda_nome" placeholder="Ex: Reels">
+              </div>
+              <div>
+                <label style="margin-top:0">Qtd</label>
+                <input type="number" id="demanda_qtd" placeholder="4" min="0" step="1">
+              </div>
+              <div>
+                <label style="margin-top:0">H/und</label>
+                <input type="number" id="demanda_horas" placeholder="0,5" min="0" step="0.1">
+              </div>
+              <div>
+                <label style="margin-top:0">&nbsp;</label>
+                <button type="button" class="btn btn-primary" onclick="addDemanda()">+</button>
+              </div>
             </div>
             <div class="tip">No teste gratuito, você pode adicionar até 3 demandas.</div>
           </div>
@@ -440,16 +445,12 @@ function fmtH(v){return Number(v || 0).toFixed(1).replace('.', ',') + 'h';}
 function byId(id){return document.getElementById(id);}
 
 function calcHora(){
-  const vida = +byId('custo_vida').value || 0;
-  const tools = +byId('custo_tools').value || 0;
-  const imp = +byId('custo_imposto').value || 0;
-  const lucro = +byId('lucro').value || 0;
-  const horas = +byId('horas_mes').value || 1;
+  const total  = +byId('custo_total').value || 0;
+  const horas  = +byId('horas_mes').value || 1;
   const margem = +byId('margem').value || 0;
-  const total = vida + tools + imp + lucro;
   horaMin = total / horas;
   horaRec = horaMin * (1 + margem / 100);
-  byId('r-custo').textContent = fmt(total);
+  byId('r-custo').textContent    = fmt(total);
   byId('r-hora-min').textContent = fmt(horaMin);
   byId('r-hora-rec').textContent = fmt(horaRec);
 }
@@ -460,12 +461,15 @@ function addDemanda(){
     alert('No teste gratuito, você pode adicionar até 3 demandas. Para usar sem limite, desbloqueie o Precifica+.');
     return;
   }
-  const nome = byId('demanda_nome').value.trim();
+  const nome  = byId('demanda_nome').value.trim();
+  const qtd   = +byId('demanda_qtd').value;
   const horas = +byId('demanda_horas').value;
-  if(!nome || !horas){alert('Preencha o nome da demanda e a quantidade de horas.');return;}
-  escopo.push({nome, horas});
-  byId('demanda_nome').value = '';
+  if(!nome || !qtd || !horas){alert('Preencha a demanda, a quantidade e as horas por unidade.');return;}
+  escopo.push({nome, qtd, horas});
+  byId('demanda_nome').value  = '';
+  byId('demanda_qtd').value   = '';
   byId('demanda_horas').value = '';
+  byId('demanda_nome').focus();
   renderEscopo();
   calcTudo();
 }
@@ -485,13 +489,15 @@ function renderEscopo(){
   lista.innerHTML = escopo.map((item,i)=>`
     <div class="item">
       <span style="flex:1;font-size:14px">${item.nome}</span>
-      <span class="badge">${fmtH(item.horas)}</span>
+      <span class="badge">${item.qtd}×</span>
+      <span class="badge">${fmtH(item.horas)}/und</span>
+      <span class="badge" style="background:#edf7f0;color:#17613b;border-color:#b6dec7">${fmtH(item.qtd * item.horas)}</span>
       <button class="btn btn-ghost" onclick="removeDemanda(${i})">×</button>
     </div>
   `).join('');
 }
 
-function totalHoras(){return escopo.reduce((s,item)=>s+item.horas,0);}
+function totalHoras(){return escopo.reduce((s,item)=>s+(item.qtd*item.horas),0);}
 
 function calcTudo(){
   calcHora();
@@ -505,7 +511,7 @@ function calcTudo(){
     return;
   }
   byId('formula-final').textContent = `${fmtH(h)} × ${fmt(horaRec)}/h`;
-  byId('alerta-final').innerHTML = `<div class="alerta ok">Valor recomendado calculado com base nos seus custos, lucro desejado, horas disponíveis e margem de segurança.</div>`;
+  byId('alerta-final').innerHTML = `<div class="alerta ok">Valor calculado com base no seu V/H recomendado e nas horas reais do escopo.</div>`;
   simularValor();
 }
 
@@ -516,11 +522,11 @@ function simularValor(){
   if(!valor || !h){el.innerHTML='';return;}
   const horaCalculada = valor / h;
   if(horaCalculada >= horaRec){
-    el.innerHTML = `<div class="alerta ok">Bom negócio. Esse valor equivale a ${fmt(horaCalculada)}/h, acima da sua hora recomendada.</div>`;
+    el.innerHTML = `<div class="alerta ok">Bom negócio. Equivale a ${fmt(horaCalculada)}/h — acima do seu V/H recomendado.</div>`;
   }else if(horaCalculada >= horaMin){
-    el.innerHTML = `<div class="alerta warn">Atenção. Esse valor equivale a ${fmt(horaCalculada)}/h. Não dá prejuízo, mas está abaixo do ideal.</div>`;
+    el.innerHTML = `<div class="alerta warn">Atenção. Equivale a ${fmt(horaCalculada)}/h. Não dá prejuízo, mas está abaixo do ideal.</div>`;
   }else{
-    el.innerHTML = `<div class="alerta bad">Prejuízo provável. Esse valor equivale a ${fmt(horaCalculada)}/h, abaixo da sua hora mínima.</div>`;
+    el.innerHTML = `<div class="alerta bad">Prejuízo provável. Equivale a ${fmt(horaCalculada)}/h — abaixo do seu V/H mínimo.</div>`;
   }
 }
 
@@ -545,6 +551,7 @@ function verificarBloqueioInicial(){
 }
 
 byId('demanda_nome').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
+byId('demanda_qtd').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
 byId('demanda_horas').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
 
 calcTudo();
