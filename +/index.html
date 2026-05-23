@@ -334,7 +334,7 @@
 
   .input-row {
     display: grid;
-    grid-template-columns: 1fr 80px 80px 36px;
+    grid-template-columns: 1fr 70px 70px 70px 36px;
     gap: 8px;
     align-items: end;
     margin-top: 14px;
@@ -347,8 +347,11 @@
     .grid, .steps { grid-template-columns: 1fr; }
     .metric-grid { grid-template-columns: 1fr 1fr; }
     .result-card { position: static; }
-    .item, .item-header, .input-row {
+    .item, .item-header {
       grid-template-columns: 1fr 70px 70px 32px;
+    }
+    .input-row {
+      grid-template-columns: 1fr 60px 60px 60px 32px;
     }
   }
 
@@ -445,7 +448,7 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
       <div class="item-header">
         <span>Demanda</span>
         <span style="text-align:center">Qtd</span>
-        <span style="text-align:center">H/und</span>
+        <span style="text-align:center">Tempo/und</span>
         <span></span>
       </div>
 
@@ -462,8 +465,12 @@ const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
           <input type="number" id="d_qtd" placeholder="4" min="0" step="1">
         </div>
         <div>
-          <label>H/und</label>
-          <input type="number" id="d_horas" placeholder="0,5" min="0" step="0.1">
+          <label>Horas</label>
+          <input type="number" id="d_horas_h" placeholder="0" min="0" step="1">
+        </div>
+        <div>
+          <label>Min</label>
+          <input type="number" id="d_horas_m" placeholder="30" min="0" max="59" step="5">
         </div>
         <div>
           <label>&nbsp;</label>
@@ -541,6 +548,15 @@ function fmt(v) {
 function fmtH(v) {
   return Number(v || 0).toFixed(1).replace('.', ',') + 'h';
 }
+function fmtTempo(h) {
+  if (!h) return '0min';
+  const total = Math.round(h * 60);
+  const hrs = Math.floor(total / 60);
+  const mins = total % 60;
+  if (hrs === 0) return mins + 'min';
+  if (mins === 0) return hrs + 'h';
+  return hrs + 'h' + mins + 'min';
+}
 
 function calcVH() {
   const custos = +document.getElementById('custo_total').value || 0;
@@ -553,7 +569,6 @@ function calcVH() {
   document.getElementById('vh-min-sub').textContent = `${fmt(custos)} ÷ ${horas}h`;
   document.getElementById('vh-rec').textContent     = fmt(vhRec);
 
-  // Preenche o campo V/H usado só se estiver vazio
   const campo = document.getElementById('vh_usado');
   if (!campo.value) campo.value = vhRec.toFixed(2);
 }
@@ -561,17 +576,20 @@ function calcVH() {
 function addDemanda() {
   const nome  = document.getElementById('d_nome').value.trim();
   const qtd   = +document.getElementById('d_qtd').value;
-  const horas = +document.getElementById('d_horas').value;
+  const h     = +document.getElementById('d_horas_h').value || 0;
+  const m     = +document.getElementById('d_horas_m').value || 0;
+  const horas = h + m / 60;
 
   if (!nome || !qtd || !horas) {
-    alert('Preencha nome, quantidade e horas por unidade.');
+    alert('Preencha nome, quantidade e o tempo por unidade.');
     return;
   }
 
   escopo.push({ nome, qtd, horas });
-  document.getElementById('d_nome').value  = '';
-  document.getElementById('d_qtd').value   = '';
-  document.getElementById('d_horas').value = '';
+  document.getElementById('d_nome').value    = '';
+  document.getElementById('d_qtd').value     = '';
+  document.getElementById('d_horas_h').value = '';
+  document.getElementById('d_horas_m').value = '';
   document.getElementById('d_nome').focus();
 
   renderEscopo();
@@ -592,7 +610,7 @@ function renderEscopo() {
     <div class="item">
       <span style="font-size:14px">${item.nome}</span>
       <span class="badge" style="text-align:center">${item.qtd}×</span>
-      <span class="badge" style="text-align:center">${fmtH(item.horas)}</span>
+      <span class="badge" style="text-align:center">${fmtTempo(item.horas)}</span>
       <button class="btn" style="padding:4px 8px;font-size:13px" onclick="removeDemanda(${i})">×</button>
     </div>
   `).join('');
@@ -605,16 +623,15 @@ function totalHoras() {
 function calcTudo() {
   calcVH();
 
-  const vh   = +document.getElementById('vh_usado').value || 0;
-  const h    = totalHoras();
+  const vh    = +document.getElementById('vh_usado').value || 0;
+  const h     = totalHoras();
   const valor = h * vh;
 
-  document.getElementById('r-horas').textContent = fmtH(h);
-  document.getElementById('r-vh').textContent    = vh ? fmt(vh) : 'R$ —';
+  document.getElementById('r-horas').textContent     = fmtH(h);
+  document.getElementById('r-vh').textContent        = vh ? fmt(vh) : 'R$ —';
   document.getElementById('valor-final').textContent = fmt(valor);
 
-  // breakdown
-  const bcard = document.getElementById('breakdown-card');
+  const bcard  = document.getElementById('breakdown-card');
   const blista = document.getElementById('lista-breakdown');
 
   if (!escopo.length || !vh) {
@@ -632,7 +649,7 @@ function calcTudo() {
     const vItem = hItem * vh;
     return `
       <div class="item">
-        <span style="font-size:13px">${item.nome} <span style="color:var(--hint)">${item.qtd}× ${fmtH(item.horas)}</span></span>
+        <span style="font-size:13px">${item.nome} <span style="color:var(--hint)">${item.qtd}× ${fmtTempo(item.horas)}</span></span>
         <span style="font-family:'DM Mono';font-size:13px;text-align:center">${fmtH(hItem)}</span>
         <span style="font-family:'DM Mono';font-size:13px;text-align:center">${fmt(vItem)}</span>
         <span></span>
@@ -643,7 +660,6 @@ function calcTudo() {
   document.getElementById('breakdown-total-h').textContent = fmtH(h);
   document.getElementById('breakdown-total-v').textContent = fmt(valor);
 
-  // alerta
   let alertaHtml = '';
   if (vh < vhMin) {
     alertaHtml = `<div class="alerta bad">⚠️ Seu V/H está abaixo do mínimo (${fmt(vhMin)}/h). Você vai trabalhar no prejuízo.</div>`;
@@ -654,7 +670,6 @@ function calcTudo() {
   }
   document.getElementById('alerta-final').innerHTML = alertaHtml;
 
-  // leitura estratégica
   const custos = +document.getElementById('custo_total').value || 0;
   const el = document.getElementById('leitura-projetos');
   if (valor > 0 && custos > 0) {
@@ -675,7 +690,7 @@ function calcTudo() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  ['d_nome','d_qtd','d_horas'].forEach(id => {
+  ['d_nome', 'd_qtd', 'd_horas_h', 'd_horas_m'].forEach(id => {
     document.getElementById(id).addEventListener('keypress', e => {
       if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
     });
