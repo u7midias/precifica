@@ -379,8 +379,32 @@
 const SUPORTE_WHATSAPP = "5511999999999";
 const SUPORTE_TEXTO = "Olá! Preciso de suporte com o Precifica+ Beta.";
 </script>
+<style>
+  #token-gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at top left,rgba(196,154,90,.28),transparent 34%),linear-gradient(135deg,#f8f3eb 0%,#eee7dc 100%);padding:1rem}
+  #token-gate .gate-card{background:rgba(255,253,248,.98);border:1px solid rgba(196,154,90,.4);border-radius:24px;padding:2.5rem 2rem;max-width:420px;width:100%;box-shadow:0 24px 60px rgba(77,47,25,.13);text-align:center}
+  #token-gate .gate-logo{font-size:22px;font-weight:900;letter-spacing:-1px;color:#2a1a10;margin-bottom:6px}
+  #token-gate .gate-logo span{color:#7a4f2a}
+  #token-gate .gate-sub{font-size:13px;color:#74685b;margin-bottom:1.8rem;line-height:1.5}
+  #token-gate input{text-align:center;font-family:'DM Mono',monospace;font-size:16px;letter-spacing:2px;margin-bottom:12px;width:100%;padding:12px;border:1.5px solid #e4d8c7;border-radius:10px;outline:none;background:#fffdf8}
+  #token-gate input:focus{border-color:#c49a5a}
+  #token-gate .gate-btn{width:100%;padding:13px;font-size:15px;background:linear-gradient(135deg,#4d2f19,#7a4f2a);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;letter-spacing:.5px}
+  #token-gate .gate-btn:hover{opacity:.9}
+  #token-gate .gate-erro{margin-top:12px;font-size:13px;color:#a32d2d;background:#fcebeb;border:1px solid #f7c1c1;border-radius:8px;padding:10px 14px;display:none}
+  #token-gate .gate-loading{margin-top:12px;font-size:13px;color:#74685b;display:none}
+</style>
 </head>
 <body>
+
+<div id="token-gate">
+  <div class="gate-card">
+    <div class="gate-logo">Precifica<span>+</span></div>
+    <p class="gate-sub">Digite seu código de acesso para entrar na ferramenta.</p>
+    <input type="text" id="token-input" placeholder="XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
+    <button class="gate-btn" onclick="verificarToken()">Entrar</button>
+    <div class="gate-erro" id="gate-erro">Token inválido ou desativado. Verifique o código recebido por email.</div>
+    <div class="gate-loading" id="gate-loading">Verificando...</div>
+  </div>
+</div>
 <div class="container">
 
 <header>
@@ -695,8 +719,56 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Enter') { e.preventDefault(); addDemanda(); }
     });
   });
+
+  // Enter no token
+  document.getElementById('token-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') { e.preventDefault(); verificarToken(); }
+  });
+
+  // Token salvo na sessão
+  const tokenSalvo = sessionStorage.getItem('precifica_token');
+  if (tokenSalvo) verificarToken(tokenSalvo);
+
   calcTudo();
 });
+
+const _SB_URL = 'https://fotssarkgylorfahkwaa.supabase.co';
+const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvdHNzYXJrZ3lsb3JmYWhrd2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NjIwMjIsImV4cCI6MjA5MTMzODAyMn0.Gel8RLs8Wqr6LX6A9zvJtP0MMgrvQtgbfsvKQDmHJco';
+
+async function verificarToken(tokenForcado) {
+  const input = document.getElementById('token-input');
+  const erro  = document.getElementById('gate-erro');
+  const load  = document.getElementById('gate-loading');
+  const token = (tokenForcado || input.value.trim()).toUpperCase();
+  if (!token) return;
+  erro.style.display = 'none';
+  load.style.display = 'block';
+  try {
+    const res = await fetch(
+      `${_SB_URL}/rest/v1/tokens?token=eq.${encodeURIComponent(token)}&select=token,ativo`,
+      { headers: { 'apikey': _SB_KEY, 'Authorization': 'Bearer ' + _SB_KEY } }
+    );
+    const data = await res.json();
+    if (data && data.length > 0 && data[0].ativo) {
+      fetch(`${_SB_URL}/rest/v1/tokens?token=eq.${encodeURIComponent(token)}`, {
+        method: 'PATCH',
+        headers: { 'apikey': _SB_KEY, 'Authorization': 'Bearer ' + _SB_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ultimo_acesso: new Date().toISOString() })
+      });
+      sessionStorage.setItem('precifica_token', token);
+      document.getElementById('token-gate').style.display = 'none';
+    } else {
+      sessionStorage.removeItem('precifica_token');
+      erro.style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
+  } catch(e) {
+    erro.textContent = 'Erro de conexão. Tente novamente.';
+    erro.style.display = 'block';
+  }
+  load.style.display = 'none';
+}
 </script>
 
 <a class="support-btn" id="support-whatsapp" target="_blank" rel="noopener">💬 Suporte</a>
