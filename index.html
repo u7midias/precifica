@@ -108,6 +108,12 @@ footer{padding:38px 0;text-align:center;background:var(--accent-dark);color:#d6c
   pointer-events: none;
 }
 
+.tempo-ativo {
+  background: var(--accent-dark) !important;
+  color: #fff !important;
+  border-color: var(--accent-dark) !important;
+}
+
 
 .pricing-grid{
 display:grid;
@@ -237,7 +243,7 @@ flex:1;
 
           <div class="panel">
             <p class="panel-title">Montar escopo</p>
-            <div style="display:grid;grid-template-columns:1fr 72px 72px auto;gap:8px;align-items:end">
+            <div style="display:grid;grid-template-columns:1fr 70px 70px auto;gap:8px;align-items:end">
               <div>
                 <label style="margin-top:0">Demanda</label>
                 <input type="text" id="demanda_nome" placeholder="Ex: Reels">
@@ -247,11 +253,14 @@ flex:1;
                 <input type="number" id="demanda_qtd" placeholder="4" min="0" step="1">
               </div>
               <div>
-                <label style="margin-top:0">H/und</label>
-                <input type="number" id="demanda_horas" placeholder="0,5" min="0" step="0.1">
+                <label style="margin-top:0">Horas</label>
+                <input type="number" id="demanda_horas_h" placeholder="0" min="0" step="1">
               </div>
               <div>
-                <label style="margin-top:0">&nbsp;</label>
+                <label style="margin-top:0">Min</label>
+                <input type="number" id="demanda_horas_m" placeholder="30" min="0" max="59" step="5">
+              </div>
+              <div style="grid-column:4/5;align-self:end">
                 <button type="button" class="btn btn-primary" onclick="addDemanda()">+</button>
               </div>
             </div>
@@ -413,6 +422,16 @@ function fmt(v){return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',').repla
 function fmtH(v){return Number(v || 0).toFixed(1).replace('.', ',') + 'h';}
 function byId(id){return document.getElementById(id);}
 
+function fmtTempo(h){
+  if(!h) return '0min';
+  const total = Math.round(h * 60);
+  const hrs = Math.floor(total / 60);
+  const mins = total % 60;
+  if(hrs === 0) return mins + 'min';
+  if(mins === 0) return hrs + 'h';
+  return hrs + 'h' + mins + 'min';
+}
+
 function calcHora(){
   const total  = +byId('custo_total').value || 0;
   const horas  = +byId('horas_mes').value || 1;
@@ -432,12 +451,15 @@ function addDemanda(){
   }
   const nome  = byId('demanda_nome').value.trim();
   const qtd   = +byId('demanda_qtd').value;
-  const horas = +byId('demanda_horas').value;
-  if(!nome || !qtd || !horas){alert('Preencha a demanda, a quantidade e as horas por unidade.');return;}
+  const h     = +byId('demanda_horas_h').value || 0;
+  const m     = +byId('demanda_horas_m').value || 0;
+  const horas = h + m / 60;
+  if(!nome || !qtd || !horas){alert('Preencha a demanda, a quantidade e o tempo por unidade.');return;}
   escopo.push({nome, qtd, horas});
-  byId('demanda_nome').value  = '';
-  byId('demanda_qtd').value   = '';
-  byId('demanda_horas').value = '';
+  byId('demanda_nome').value    = '';
+  byId('demanda_qtd').value     = '';
+  byId('demanda_horas_h').value = '';
+  byId('demanda_horas_m').value = '';
   byId('demanda_nome').focus();
   renderEscopo();
   calcTudo();
@@ -459,8 +481,8 @@ function renderEscopo(){
     <div class="item">
       <span style="flex:1;font-size:14px">${item.nome}</span>
       <span class="badge">${item.qtd}×</span>
-      <span class="badge">${fmtH(item.horas)}/und</span>
-      <span class="badge" style="background:#edf7f0;color:#17613b;border-color:#b6dec7">${fmtH(item.qtd * item.horas)}</span>
+      <span class="badge">${fmtTempo(item.horas)}/und</span>
+      <span class="badge" style="background:#edf7f0;color:#17613b;border-color:#b6dec7">${fmtTempo(item.qtd * item.horas)}</span>
       <button class="btn btn-ghost" onclick="removeDemanda(${i})">×</button>
     </div>
   `).join('');
@@ -521,48 +543,11 @@ function verificarBloqueioInicial(){
 
 byId('demanda_nome').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
 byId('demanda_qtd').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
-byId('demanda_horas').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
+byId('demanda_horas_h').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
+byId('demanda_horas_m').addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();addDemanda();}});
 
 calcTudo();
 verificarBloqueioInicial();
-
-function bloquearTeste() {
-  const btn = document.getElementById('btnResultado');
-  const box = document.getElementById('trialLocked');
-
-  if (btn) {
-    btn.textContent = 'Teste gratuito usado';
-    btn.classList.add('btn-disabled');
-    btn.disabled = true;
-  }
-
-  if (box) {
-    box.style.display = 'block';
-  }
-}
-
-function usarTeste() {
-  if (localStorage.getItem('precifica_teste_usado') === 'sim') {
-    bloquearTeste();
-    return;
-  }
-
-  if (typeof calcTudo === 'function') {
-    calcTudo();
-  } else if (typeof calcular === 'function') {
-    calcular();
-  }
-
-  localStorage.setItem('precifica_teste_usado', 'sim');
-  bloquearTeste();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  if (localStorage.getItem('precifica_teste_usado') === 'sim') {
-    bloquearTeste();
-  }
-});
-
 </script>
 </body>
 </html>
